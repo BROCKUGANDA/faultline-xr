@@ -1,0 +1,54 @@
+# ============================================================
+# FAULTLINE XR — Unity + WebXR .gitignore
+# ============================================================
+
+# Unity core
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]in/
+[Bb]uild/
+[Bb]uilds/
+
+# Compiled / generated Unity files
+*.csproj
+*.sln
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pidb.meta
+*.mdb
+*.mdb.meta
+*.usertests
+*.csproj.*.*orig*
+*.user
+*.usertests.meta
+*.svd.meta
+
+# Editor tooling / local workspace state
+.vs/
+.vscode/
+.idea/
+.commandcode/
+
+# Node / WebXR build artifacts
+node_modules/
+web/node_modules/
+web/.vite/
+web/dist/
+*.local
+
+# Logs / OS / temp files
+*.log
+Logs/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+
+# Local env / secrets
+.env
+*.env
+*.env.local

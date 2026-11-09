@@ -1,0 +1,25 @@
+{
+  "name": "Faultline.App",
+  "rootNamespace": "Faultline.App",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Infrastructure",
+    "Faultline.Incidents",
+    "Faultline.Agents",
+    "Faultline.Remediation",
+    "Faultline.XR",
+    "Faultline.Interaction",
+    "Faultline.Spatial",
+    "Faultline.Presentation",
+    "Faultline.Observability",
+    "Faultline.Persistence",
+    "Faultline.Integrations"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Faultline.Remediation",
+  "rootNamespace": "Faultline.Remediation",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Incidents",
+    "Faultline.Agents",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

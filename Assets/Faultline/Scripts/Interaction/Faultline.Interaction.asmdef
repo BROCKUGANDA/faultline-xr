@@ -1,0 +1,16 @@
+{
+  "name": "Faultline.Interaction",
+  "rootNamespace": "Faultline.Interaction",
+  "references": [
+    "Faultline.XR",
+    "Faultline.Domain",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

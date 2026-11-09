@@ -1,0 +1,20 @@
+{
+  "name": "Faultline.Presentation",
+  "rootNamespace": "Faultline.Presentation",
+  "references": [
+    "Faultline.Spatial",
+    "Faultline.Domain",
+    "Faultline.Incidents",
+    "Faultline.Agents",
+    "Faultline.Remediation",
+    "Faultline.Interaction",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

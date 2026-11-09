@@ -1,0 +1,73 @@
+{
+  "project": "FAULTLINE XR",
+  "workingDirectory": "D:/AI AZIMARA(AAA)/FAULTLINE XR/",
+  "auditDate": "2026-11-08",
+  "scope": "inspection only",
+  "os": "Windows 11 10.0.26300 (win32 x86_64)",
+  "shell": "PowerShell 7.6.9 (pwsh.exe); Windows PowerShell 5.1 also present; bash via Git/MSYS2",
+  "cpuArch": "x86_64",
+  "cpu": "12th Gen Intel(R) Core(TM) i7-1255U, 10 cores / 12 logical processors, max clock 1700 MHz",
+  "totalMemoryGB": 15.7,
+  "freeDiskGB": {
+    "C": 12,
+    "D": 26
+  },
+  "directoryEmpty": true,
+  "isGitRepo": false,
+  "gitStatus": "not a git repository",
+  "gitLog": "not applicable",
+  "gitVersion": "2.55.0.windows.3",
+  "dotnetVersion": "10.0.403",
+  "unityVersion": "not found",
+  "unityPath": null,
+  "androidHome": "C:\\Users\\HP\\AppData\\Local\\Android\\sdk",
+  "androidSdkRoot": "C:\\Users\\HP\\AppData\\Local\\Android\\sdk",
+  "androidSdkVersion": {
+    "platformTools": "37.0.1-15733141",
+    "adb": "1.0.41",
+    "buildTools": ["35.0.0", "36.0.0", "37.0.0"]
+  },
+  "ndkVersion": "28.2.13676358 (r28c)",
+  "ndkPath": "C:\\Users\\HP\\AppData\\Local\\Android\\sdk\\ndk\\28.2.13676358",
+  "jdkVersion": "not found",
+  "nodeVersion": "v26.7.0",
+  "bunVersion": "1.4.2",
+  "pythonVersion": "3.13.9",
+  "openXrAvailable": false,
+  "metaXrSdkAvailable": false,
+  "metaXrSdkVersion": null,
+  "simulatorAvailable": false,
+  "metaCliAvailable": false,
+  "missingPrerequisites": [
+    {
+      "prerequisite": "Unity Editor (LTS) with Android Build Support + OpenXR modules",
+      "installMethod": "Install Unity Hub from unity.com, add an LTS release (e.g. Unity 6000.x LTS) with Android Build Support and OpenXR packages; target install on D:",
+      "verifyCommand": "Unity -version"
+    },
+    {
+      "prerequisite": "JDK 17",
+      "installMethod": "Install Adoptium/Eclipse Temurin JDK 17 or Oracle JDK 17; add bin to PATH",
+      "verifyCommand": "javac -version"
+    },
+    {
+      "prerequisite": "OpenXR Runtime + Meta XR SDK",
+      "installMethod": "Import Meta XR SDK All-in-One (v207+) into the Unity project via Unity Package Manager/OpenUPM; bundles OpenXR plugin",
+      "verifyCommand": "Confirm com.meta.xr.sdk.all_in_one and OpenXR plugin in Unity Package Manager"
+    },
+    {
+      "prerequisite": "Meta XR Simulator / Meta CLI",
+      "installMethod": "Install Meta XR Simulator package and/or Meta CLI from the Meta developer portal",
+      "verifyCommand": "Simulator appears in Unity; meta --version"
+    }
+  ],
+  "recommendedUnityVersion": "Latest LTS (e.g. Unity 6000.x LTS)",
+  "recommendedMetaXrSdkVersion": "Meta XR SDK All-in-One v207+ (minimum v81+ per PRD)",
+  "versionPolicy": "Do not downgrade Unity or Meta XR SDK; do not mix versions from different release lines",
+  "notes": [
+    "FAULTLINE XR directory exists and is empty; not a git repo. Run git init when ready to version control.",
+    "C: drive has only 12 GB free; prefer D: for Unity Editor, Android SDK caches, and project assets.",
+    "JDK is missing and required before Unity Android builds can succeed.",
+    "OpenXR runtime and Meta XR SDK are not present locally; pulled into the Unity project via Package Manager.",
+    "Node (v26.7.0), bun (1.4.2), dotnet (10.0.403), Python (3.13.x), and git are available but not required for the Unity/XR core toolchain."
+  ]
+}

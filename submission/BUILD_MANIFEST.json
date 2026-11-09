@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "buildType": "WebXR static production build",
+  "sourceDirectory": "web",
+  "outputDirectory": "web/dist",
+  "publicUrl": "<PUBLIC_HTTPS_URL>",
+  "videoUrl": "<PUBLIC_YOUTUBE_OR_VIMEO_URL>",
+  "buildTimestamp": "<ISO_8601_UTC_TIMESTAMP>",
+  "track": "Productivity",
+  "division": "New Experience",
+  "targetPlatform": "Meta Quest Browser / WebXR",
+  "inputModel": "WebXR hand tracking",
+  "testSummary": {
+    "typecheck": {
+      "passed": true,
+      "notes": "npx tsc --noEmit"
+    },
+    "domainTests": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "notes": "npm test -- --run"
+    },
+    "productionBuild": {
+      "passed": true,
+      "notes": "npm run build; output in web/dist/"
+    },
+    "desktopSmokeTest": {
+      "executed": false,
+      "notes": "Build compiles; a browser smoke test is still recommended."
+    },
+    "xrDevice": {
+      "executed": false,
+      "notes": "Requires Meta Quest Browser on a Meta Quest headset."
+    }
+  },
+  "notes": "Deploy web/dist/index.html and web/dist/assets together over HTTPS. The Unity/C# tree is reference material only and is not the submission build."
+}

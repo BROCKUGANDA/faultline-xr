@@ -1,0 +1,15 @@
+{
+  "name": "Faultline.Infrastructure",
+  "rootNamespace": "Faultline.Infrastructure",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

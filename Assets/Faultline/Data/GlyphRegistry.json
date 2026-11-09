@@ -1,0 +1,32 @@
+{
+  "schema": "faultline.design-system.glyph-registry.v1",
+  "title": "FAULTLINE XR FL_* icon glyph registry",
+  "description": "Maps each FL_* glyph name to a description and the glyph name used per visual state (Normal/Hover/Selected/Disabled/Critical). Presentation resolves these to SDF font characters or sprite-atlas keys at runtime.",
+  "states": ["Normal", "Hover", "Selected", "Disabled", "Critical"],
+  "glyphs": [
+    { "name": "FL_NODE", "description": "Infrastructure service node", "normal": "fl_node", "hover": "fl_node_hover", "selected": "fl_node_selected", "disabled": "fl_node_disabled", "critical": "fl_node_critical" },
+    { "name": "FL_DATABASE", "description": "Database / data store node", "normal": "fl_database", "hover": "fl_database_hover", "selected": "fl_database_selected", "disabled": "fl_database_disabled", "critical": "fl_database_critical" },
+    { "name": "FL_GATEWAY", "description": "Gateway / entry point", "normal": "fl_gateway", "hover": "fl_gateway_hover", "selected": "fl_gateway_selected", "disabled": "fl_gateway_disabled", "critical": "fl_gateway_critical" },
+    { "name": "FL_AUTH", "description": "Authentication / identity", "normal": "fl_auth", "hover": "fl_auth_hover", "selected": "fl_auth_selected", "disabled": "fl_auth_disabled", "critical": "fl_auth_critical" },
+    { "name": "FL_QUEUE", "description": "Message queue", "normal": "fl_queue", "hover": "fl_queue_hover", "selected": "fl_queue_selected", "disabled": "fl_queue_disabled", "critical": "fl_queue_critical" },
+    { "name": "FL_WORKER", "description": "Worker / background process", "normal": "fl_worker", "hover": "fl_worker_hover", "selected": "fl_worker_selected", "disabled": "fl_worker_disabled", "critical": "fl_worker_critical" },
+    { "name": "FL_NETWORK", "description": "Network link / dependency edge", "normal": "fl_network", "hover": "fl_network_hover", "selected": "fl_network_selected", "disabled": "fl_network_disabled", "critical": "fl_network_critical" },
+    { "name": "FL_TRACE", "description": "Distributed trace span", "normal": "fl_trace", "hover": "fl_trace_hover", "selected": "fl_trace_selected", "disabled": "fl_trace_disabled", "critical": "fl_trace_critical" },
+    { "name": "FL_METRIC", "description": "Metric sample / gauge", "normal": "fl_metric", "hover": "fl_metric_hover", "selected": "fl_metric_selected", "disabled": "fl_metric_disabled", "critical": "fl_metric_critical" },
+    { "name": "FL_LOG", "description": "Log event", "normal": "fl_log", "hover": "fl_log_hover", "selected": "fl_log_selected", "disabled": "fl_log_disabled", "critical": "fl_log_critical" },
+    { "name": "FL_AGENT", "description": "Autonomous agent", "normal": "fl_agent", "hover": "fl_agent_hover", "selected": "fl_agent_selected", "disabled": "fl_agent_disabled", "critical": "fl_agent_critical" },
+    { "name": "FL_ORACLE", "description": "Oracle / external data feed", "normal": "fl_oracle", "hover": "fl_oracle_hover", "selected": "fl_oracle_selected", "disabled": "fl_oracle_disabled", "critical": "fl_oracle_critical" },
+    { "name": "FL_SENTRY", "description": "Sentry / watcher alert", "normal": "fl_sentry", "hover": "fl_sentry_hover", "selected": "fl_sentry_selected", "disabled": "fl_sentry_disabled", "critical": "fl_sentry_critical" },
+    { "name": "FL_FORGE", "description": "Forge / build or deploy action", "normal": "fl_forge", "hover": "fl_forge_hover", "selected": "fl_forge_selected", "disabled": "fl_forge_disabled", "critical": "fl_forge_critical" },
+    { "name": "FL_APPROVE", "description": "Approve action", "normal": "fl_approve", "hover": "fl_approve_hover", "selected": "fl_approve_selected", "disabled": "fl_approve_disabled", "critical": "fl_approve_critical" },
+    { "name": "FL_REJECT", "description": "Reject action", "normal": "fl_reject", "hover": "fl_reject_hover", "selected": "fl_reject_selected", "disabled": "fl_reject_disabled", "critical": "fl_reject_critical" },
+    { "name": "FL_WARNING", "description": "Warning / degraded status", "normal": "fl_warning", "hover": "fl_warning_hover", "selected": "fl_warning_selected", "disabled": "fl_warning_disabled", "critical": "fl_warning_critical" },
+    { "name": "FL_FAILURE", "description": "Failure / critical status", "normal": "fl_failure", "hover": "fl_failure_hover", "selected": "fl_failure_selected", "disabled": "fl_failure_disabled", "critical": "fl_failure_critical" },
+    { "name": "FL_RECOVERY", "description": "Recovery / remediated status", "normal": "fl_recovery", "hover": "fl_recovery_hover", "selected": "fl_recovery_selected", "disabled": "fl_recovery_disabled", "critical": "fl_recovery_critical" },
+    { "name": "FL_VERIFY", "description": "Verify / check action", "normal": "fl_verify", "hover": "fl_verify_hover", "selected": "fl_verify_selected", "disabled": "fl_verify_disabled", "critical": "fl_verify_critical" },
+    { "name": "FL_TIMELINE", "description": "Timeline / event history", "normal": "fl_timeline", "hover": "fl_timeline_hover", "selected": "fl_timeline_selected", "disabled": "fl_timeline_disabled", "critical": "fl_timeline_critical" },
+    { "name": "FL_SETTINGS", "description": "Settings / configuration", "normal": "fl_settings", "hover": "fl_settings_hover", "selected": "fl_settings_selected", "disabled": "fl_settings_disabled", "critical": "fl_settings_critical" },
+    { "name": "FL_ACCESSIBILITY", "description": "Accessibility / comfort controls", "normal": "fl_accessibility", "hover": "fl_accessibility_hover", "selected": "fl_accessibility_selected", "disabled": "fl_accessibility_disabled", "critical": "fl_accessibility_critical" },
+    { "name": "FL_PAUSE", "description": "Pause / suspend action", "normal": "fl_pause", "hover": "fl_pause_hover", "selected": "fl_pause_selected", "disabled": "fl_pause_disabled", "critical": "fl_pause_critical" }
+  ]
+}

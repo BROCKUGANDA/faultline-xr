@@ -1,0 +1,15 @@
+{
+  "name": "Faultline.Integrations",
+  "rootNamespace": "Faultline.Integrations",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Faultline.XR",
+  "rootNamespace": "Faultline.XR",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Observability"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}
