@@ -1,5 +1,7 @@
 namespace Faultline.Domain
 {
+    using System;
+
     /// <summary>
     /// Platform-independent RGBA colour value.
     ///

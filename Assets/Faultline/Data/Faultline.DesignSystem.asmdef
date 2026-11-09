@@ -1,0 +1,14 @@
+{
+  "name": "Faultline.DesignSystem",
+  "rootNamespace": "Faultline.DesignSystem",
+  "references": [
+    "Faultline.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

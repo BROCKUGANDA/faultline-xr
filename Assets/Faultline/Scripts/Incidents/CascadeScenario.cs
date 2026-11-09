@@ -25,21 +25,21 @@ namespace Faultline.Incidents
             "monitoring"
         };
 
-        private static readonly (string Source, string Target, Infrastructure.DependencyDirection Direction,
-            Infrastructure.DependencyType Type, double LatencyMs)[] ScenarioEdges =
+        private static readonly (string Source, string Target, Domain.DependencyDirection Direction,
+            Domain.DependencyType Type, double LatencyMs)[] ScenarioEdges =
         {
-            ("api-gateway", "auth-service", Infrastructure.DependencyDirection.Downstream,
-                Infrastructure.DependencyType.ApiCall, 25),
-            ("api-gateway", "app-service", Infrastructure.DependencyDirection.Downstream,
-                Infrastructure.DependencyType.ApiCall, 35),
-            ("app-service", "database", Infrastructure.DependencyDirection.Downstream,
-                Infrastructure.DependencyType.Database, 40),
-            ("app-service", "message-broker", Infrastructure.DependencyDirection.Downstream,
-                Infrastructure.DependencyType.MessageQueue, 15),
-            ("message-broker", "worker-cluster", Infrastructure.DependencyDirection.Downstream,
-                Infrastructure.DependencyType.MessageQueue, 20),
-            ("database", "message-broker", Infrastructure.DependencyDirection.Upstream,
-                Infrastructure.DependencyType.Database, 10)
+            ("api-gateway", "auth-service", Domain.DependencyDirection.Downstream,
+                Domain.DependencyType.ApiCall, 25),
+            ("api-gateway", "app-service", Domain.DependencyDirection.Downstream,
+                Domain.DependencyType.ApiCall, 35),
+            ("app-service", "database", Domain.DependencyDirection.Downstream,
+                Domain.DependencyType.Database, 40),
+            ("app-service", "message-broker", Domain.DependencyDirection.Downstream,
+                Domain.DependencyType.MessageQueue, 15),
+            ("message-broker", "worker-cluster", Domain.DependencyDirection.Downstream,
+                Domain.DependencyType.MessageQueue, 20),
+            ("database", "message-broker", Domain.DependencyDirection.Upstream,
+                Domain.DependencyType.Database, 10)
         };
 
         /// <summary>

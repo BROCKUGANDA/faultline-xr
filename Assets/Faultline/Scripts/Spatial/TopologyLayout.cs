@@ -111,7 +111,7 @@ namespace Faultline.Spatial
         {
             // Simple repulsion: iterate a few times pushing overlapping nodes apart.
             // Keeps layout deterministic and bounded within the reach envelope.
-            var items = positions.ToList();
+            var items = positions.Select(kvp => (kvp.Key, kvp.Value)).ToList();
             for (int iteration = 0; iteration < 10; iteration++)
             {
                 bool anyMoved = false;

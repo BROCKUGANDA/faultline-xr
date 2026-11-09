@@ -215,6 +215,7 @@ export class Simulation {
   private readonly random: () => number;
   private health = new Map<string, number>();
   private tickCount = 0;
+  private faultActive = true;
   private snapshot: SimulationSnapshot | null = null;
   readonly events: TimelineEvent[] = [];
 
@@ -268,7 +269,7 @@ export class Simulation {
       for (const dep of dependencies) worst = Math.min(worst, this.health.get(dep) ?? 1);
 
       let value = current;
-      if (node.id === this.rootCauseNodeId) {
+      if (node.id === this.rootCauseNodeId && this.faultActive) {
         value = Math.max(0, current - 0.015 * this.random() - 0.004);
       } else if (worst < 0.55) {
         value = Math.max(0, current - 0.08 * (1 - worst) * (0.6 + this.random() * 0.6));
@@ -302,6 +303,9 @@ export class Simulation {
     const before = this.health.get(nodeId) ?? 0;
     const after = Math.max(clamp01(before + delta), 0.96);
     this.health.set(nodeId, after);
+    // The simulated fault is fixed: stop the root-cause decay so verification
+    // reflects recovery instead of racing the ongoing degradation.
+    this.faultActive = false;
 
     for (const dependent of this.dependentsOf(nodeId)) {
       const current = this.health.get(dependent) ?? 0;
@@ -588,8 +592,15 @@ export class RemediationService {
     }
     const rootHealth = simulation.rootHealth;
     const healthy = rootHealth >= 0.9 && simulation.aggregateHealth >= 0.8;
-    proposal.status = healthy ? 'verified' : 'failed';
-    if (proposal.recovery) proposal.recovery.verified = healthy;
+    // A failed verification must stay retryable: the simulation keeps healing
+    // after remediation, so locking the proposal to 'failed' here would make
+    // recovery impossible to confirm once health crosses the threshold.
+    if (healthy) {
+      proposal.status = 'verified';
+      if (proposal.recovery) proposal.recovery.verified = true;
+    } else if (proposal.recovery) {
+      proposal.recovery.verified = false;
+    }
     return ok(healthy);
   }
 

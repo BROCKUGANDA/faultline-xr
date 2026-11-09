@@ -47,7 +47,7 @@ namespace Faultline.XR
                 return Result<bool>.Failure(
                     ErrorCatalogue.XrSessionFailed(
                         Guid.NewGuid().ToString(),
-                        new Dictionary<string, object> { { "stage", "Poll" } }).ErrorCode,
+                        new Dictionary<string, object> { { "stage", "Poll" } }).Code,
                     "Input provider is not connected. Start the XR session first.");
             }
 
@@ -71,7 +71,7 @@ namespace Faultline.XR
             {
                 return Result<bool>.Failure(
                     ErrorCatalogue.XrSessionFailed(
-                        Guid.NewGuid().ToString()).ErrorCode,
+                        Guid.NewGuid().ToString()).Code,
                     "Cannot connect input provider: XR session is not available.");
             }
 
@@ -159,7 +159,7 @@ namespace Faultline.XR
         /// </summary>
         internal void OnTrackingLost(HandSide hand, bool bothHands)
         {
-            _session.SimulateTrackingLost(hand, bothHands);
+            if (_session is XrSession simulated) simulated.SimulateTrackingLost(hand, bothHands);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Faultline.XR
         /// </summary>
         internal void OnTrackingRecovered(HandSide hand, bool bothHands)
         {
-            _session.SimulateTrackingRecovered(hand, bothHands);
+            if (_session is XrSession simulated) simulated.SimulateTrackingRecovered(hand, bothHands);
         }
     }
 }

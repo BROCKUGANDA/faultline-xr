@@ -180,6 +180,8 @@ button.secondary {
   font-size: 11px;
   text-align: center;
   backdrop-filter: blur(8px);
+  /* Informational only: never block pointer events aimed at the canvas/panels. */
+  pointer-events: none;
 }
 
 @media (max-width: 640px) {

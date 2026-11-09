@@ -54,7 +54,7 @@ namespace Faultline.Spatial
         public static (System.Numerics.Vector3 Position, bool WasClamped)
             ClampToReachEnvelope(System.Numerics.Vector3 position)
         {
-            var distance = System.Numerics.Vector3.Length(position - Origin);
+            var distance = (position - Origin).Length();
             var wasClamped = false;
             var clamped = position;
 
@@ -82,7 +82,7 @@ namespace Faultline.Spatial
             DirectionAndDistanceFromAnchor(System.Numerics.Vector3 position)
         {
             var offset = position - Origin;
-            var distance = System.Numerics.Vector3.Length(offset);
+            var distance = offset.Length();
             var direction = distance > 0.0001f
                 ? System.Numerics.Vector3.Normalize(offset)
                 : Forward;
@@ -95,7 +95,7 @@ namespace Faultline.Spatial
         /// </summary>
         public static bool IsWithinComfortableReach(System.Numerics.Vector3 position)
         {
-            var distance = System.Numerics.Vector3.Length(position - Origin);
+            var distance = (position - Origin).Length();
             return distance >= LabelMinDistanceM && distance <= FarReachM;
         }
     }

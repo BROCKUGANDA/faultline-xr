@@ -52,3 +52,7 @@ desktop.ini
 .env
 *.env
 *.env.local
+
+# Large/local tooling artifacts (not for git)
+video/
+audit-2026-11-09/*.png

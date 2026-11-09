@@ -72,7 +72,7 @@ namespace Faultline.Incidents
                 { "scenarioId", CurrentScenarioId },
                 { "isRunning", IsRunning },
                 { "rootCauseNodeId", RootCauseNodeId },
-                { "tick", Engine != null ? Engine.Tick : 0 }
+                { "tick", Engine != null ? Engine.TickCount : 0 }
             };
     }
 }

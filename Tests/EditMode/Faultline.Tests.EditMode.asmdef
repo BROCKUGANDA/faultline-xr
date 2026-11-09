@@ -1,1 +1,32 @@
-{"name": "Faultline.Tests.EditMode", "references": ["Faultline.Domain", "Faultline.Infrastructure", "Faultline.Incidents", "Faultline.Agents", "Faultline.Remediation", "Faultline.XR", "Faultline.Interaction", "Faultline.Spatial", "Faultline.Presentation", "Faultline.Observability", "Faultline.Persistence", "Faultline.Integrations", "Unity.TestRunner"], "includePlatforms": ["Editor"], "excludePlatforms": [], "allowUnsafeCode": false, "overrideReferences": false, "autoReferenced": true, "defineConstraints": ["UNITY_INCLUDE_TESTS"], "versionDefines": [], "noEngineReferences": false, "optionalUnityReferences": ["TestAssemblies"]}
+{
+  "name": "Faultline.Tests.EditMode",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.Infrastructure",
+    "Faultline.Incidents",
+    "Faultline.Agents",
+    "Faultline.Remediation",
+    "Faultline.XR",
+    "Faultline.Interaction",
+    "Faultline.Spatial",
+    "Faultline.Presentation",
+    "Faultline.Observability",
+    "Faultline.Persistence",
+    "Faultline.Integrations",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "Faultline.DesignSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "autoReferenced": true,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,16 +1,14 @@
 namespace Faultline.Domain
 {
+    using System;
+
     /// <summary>
     /// Unit type for fallible operations that carry no success value, used with
     /// <see cref="Result{Unit}"/>. Pure C# — no UnityEngine dependency.
     /// </summary>
     public readonly struct Unit : IEquatable<Unit>
     {
-        public static Unit Instance { get; } = new Unit();
-
-        private Unit()
-        {
-        }
+        public static Unit Instance { get; } = default;
 
         public bool Equals(Unit other) => true;
 

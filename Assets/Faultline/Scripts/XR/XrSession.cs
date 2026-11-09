@@ -67,7 +67,7 @@ namespace Faultline.XR
                 return Result<bool>.Failure(
                     ErrorCatalogue.XrSessionFailed(
                         Guid.NewGuid().ToString(),
-                        new Dictionary<string, object> { { "stage", "StartSession" } }).ErrorCode,
+                        new Dictionary<string, object> { { "stage", "StartSession" } }).Code,
                     "XR session must be initialized before StartSession.");
             }
 
@@ -111,7 +111,7 @@ namespace Faultline.XR
                 return Result<HandTrackingState>.Failure(
                     ErrorCatalogue.XrSessionFailed(
                         Guid.NewGuid().ToString(),
-                        new Dictionary<string, object> { { "stage", "GetHandTrackingState" } }).ErrorCode,
+                        new Dictionary<string, object> { { "stage", "GetHandTrackingState" } }).Code,
                     "Cannot get hand-tracking state: XR session is not active.");
             }
 
@@ -119,7 +119,7 @@ namespace Faultline.XR
             {
                 return Result<HandTrackingState>.Failure(
                     ErrorCatalogue.XrHandTrackingUnavailable(
-                        Guid.NewGuid().ToString()).ErrorCode,
+                        Guid.NewGuid().ToString()).Code,
                     "Hand tracking is not available on this device.");
             }
 

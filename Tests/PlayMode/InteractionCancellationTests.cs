@@ -1,5 +1,7 @@
 namespace Faultline.Tests.PlayMode
 {
+    using System.Collections;
+    using UnityEngine.TestTools;
     using System;
     using System.Collections.Generic;
 
@@ -10,14 +12,17 @@ namespace Faultline.Tests.PlayMode
     /// PlayMode tests for interaction cancellation:
     /// cancelling in-flight interactions when tracking is lost.
     ///
-    /// Pure C# — no UnityEngine, no UnityEditor.
+    /// Domain logic is pure C#; the tests themselves run as PlayMode
+    /// coroutines under Unity's test framework.
     /// </summary>
     [TestFixture]
     public sealed class InteractionCancellationTests
     {
-        [Test]
-        public void OnTrackingLost_CancelsPendingInteractions()
+        [UnityTest]
+        public IEnumerator OnTrackingLost_CancelsPendingInteractions()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var handler = new TrackingLossHandler();
             bool cancelled = false;
             handler.RegisterPendingInteraction(() => cancelled = true);
@@ -29,9 +34,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(cancelled, Is.True);
         }
 
-        [Test]
-        public void TrackingLossBegan_RaisedOnLoss()
+        [UnityTest]
+        public IEnumerator TrackingLossBegan_RaisedOnLoss()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var handler = new TrackingLossHandler();
             bool raised = false;
             handler.TrackingLossBegan += (_, _) => raised = true;
@@ -41,9 +48,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(raised, Is.True);
         }
 
-        [Test]
-        public void CompletePendingInteraction_NotCancelledOnTrackingLost()
+        [UnityTest]
+        public IEnumerator CompletePendingInteraction_NotCancelledOnTrackingLost()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var handler = new TrackingLossHandler();
             bool cancelled = false;
             bool completed = false;
@@ -59,9 +68,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(completed, Is.False); // not executed, just unregistered
         }
 
-        [Test]
-        public void IsTrackingLost_FalseUntilLossOccurs()
+        [UnityTest]
+        public IEnumerator IsTrackingLost_FalseUntilLossOccurs()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var handler = new TrackingLossHandler();
 
             Assert.That(handler.IsTrackingLost, Is.False);
@@ -71,9 +82,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(handler.IsTrackingLost, Is.True);
         }
 
-        [Test]
-        public void Reset_ClearsTrackingLossState()
+        [UnityTest]
+        public IEnumerator Reset_ClearsTrackingLossState()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var handler = new TrackingLossHandler();
             handler.OnTrackingLost(new HashSet<HandSide> { HandSide.Left, HandSide.Right });
 

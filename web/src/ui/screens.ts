@@ -416,7 +416,11 @@ export function drawActionPanel(p: Painter, model: ScreenModel): void {
   });
 
   let y = 0.145;
-  if (selected) {
+  // The investigating phase needs the full panel height for the dispatch grid;
+  // the selected-node metrics card is collapsed there to avoid overlapping the
+  // primary button (hitTest resolves first-drawn buttons, so overlap made
+  // 'Synthesise findings' unreachable behind the dispatch grid).
+  if (selected && state.phase !== 'investigating') {
     p.roundedRect(x, y, w, 0.07, 0.009, 'rgba(21,33,49,0.5)', 'rgba(38,54,74,0.85)', 0.001);
     p.text(selected.name.toUpperCase(), x + 0.01, y + 0.007, {
       sizeMm: 3.4,
@@ -455,18 +459,19 @@ export function drawActionPanel(p: Painter, model: ScreenModel): void {
       break;
 
     case 'investigating': {
-      p.text('DISPATCH ANALYST AGENTS', x, y, { sizeMm: 2.9, color: COLORS.mist, mono: true, weight: 700 });
+      const sy = 0.148;
+      p.text('DISPATCH ANALYST AGENTS', x, sy, { sizeMm: 2.9, color: COLORS.mist, mono: true, weight: 700 });
       p.text(
         `${state.findings.length}/2 EVIDENCE REQUIRED`,
         W - x,
-        y,
+        sy,
         { sizeMm: 2.9, color: state.findings.length >= 2 ? COLORS.recoveryGreen : COLORS.amber, mono: true, align: 'right' },
       );
       const roles: AgentRole[] = ['ORACLE', 'TRACE', 'SENTRY', 'FORGE'];
       const bw = (w - 0.008) / 2;
       roles.forEach((role, index) => {
         const bx = x + (index % 2) * (bw + 0.008);
-        const by = y + 0.012 + Math.floor(index / 2) * 0.05;
+        const by = sy + 0.014 + Math.floor(index / 2) * 0.044;
         const profile = AGENT_PROFILES[role];
         const dispatched = state.findings.some((finding) => finding.role === role);
         button(
@@ -476,18 +481,17 @@ export function drawActionPanel(p: Painter, model: ScreenModel): void {
           bx,
           by,
           bw,
-          0.042,
+          0.036,
           dispatched ? 'ghost' : 'secondary',
           !dispatched && state.findings.length < 4,
           dispatched ? 'DONE' : 'DISPATCH',
         );
       });
-      const hintY = y + 0.018 + 2 * 0.05;
       p.text(
-        state.findings.length >= 2 ? 'Enough evidence collected. Synthesise findings.' : 'Two independent findings unlock remediation.',
+        state.findings.length >= 2 ? 'Enough evidence. Synthesise findings.' : 'Two findings unlock remediation.',
         x,
-        hintY,
-        { sizeMm: 3.2, color: state.findings.length >= 2 ? COLORS.recoveryGreen : COLORS.mist },
+        sy + 0.1,
+        { sizeMm: 2.7, color: state.findings.length >= 2 ? COLORS.recoveryGreen : COLORS.mist },
       );
       button(p, 'synthesise', 'Synthesise findings', x, H - 0.086, w, 0.05, 'primary', state.findings.length >= 2, 'NEXT');
       break;

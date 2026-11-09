@@ -1,5 +1,7 @@
 namespace Faultline.Observability
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Performance budgets per target device profile (PRD §13).
     ///

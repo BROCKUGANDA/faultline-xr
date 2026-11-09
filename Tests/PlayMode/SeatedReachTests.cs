@@ -1,5 +1,7 @@
 namespace Faultline.Tests.PlayMode
 {
+    using System.Collections;
+    using UnityEngine.TestTools;
     using Faultline.Presentation;
     using Faultline.Spatial;
     using NUnit.Framework;
@@ -8,40 +10,49 @@ namespace Faultline.Tests.PlayMode
     /// PlayMode tests for seated reach and panel placement:
     /// seated reach envelope, panel placement.
     ///
-    /// Pure C# — no UnityEngine, no UnityEditor.
+    /// Domain logic is pure C#; the tests themselves run as PlayMode
+    /// coroutines under Unity's test framework.
     /// </summary>
     [TestFixture]
     public sealed class SeatedReachTests
     {
-        [Test]
-        public void CoordinateSystem_DefinesSeatedReachEnvelope()
+        [UnityTest]
+        public IEnumerator CoordinateSystem_DefinesSeatedReachEnvelope()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             Assert.That(CoordinateSystem.NearReachM, Is.EqualTo(0.40f));
             Assert.That(CoordinateSystem.FarReachM, Is.EqualTo(0.70f));
             Assert.That(CoordinateSystem.LabelMinDistanceM, Is.EqualTo(0.30f));
         }
 
-        [Test]
-        public void IsWithinComfortableReach_NearPosition_ReturnsTrue()
+        [UnityTest]
+        public IEnumerator IsWithinComfortableReach_NearPosition_ReturnsTrue()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var position = -0.50f * System.Numerics.Vector3.UnitZ; // 0.5 m forward
             var within = CoordinateSystem.IsWithinComfortableReach(position);
 
             Assert.That(within, Is.True);
         }
 
-        [Test]
-        public void IsWithinComfortableReach_TooFar_ReturnsFalse()
+        [UnityTest]
+        public IEnumerator IsWithinComfortableReach_TooFar_ReturnsFalse()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var position = -2.0f * System.Numerics.Vector3.UnitZ; // 2 m forward
             var within = CoordinateSystem.IsWithinComfortableReach(position);
 
             Assert.That(within, Is.False);
         }
 
-        [Test]
-        public void ClampToReachEnvelope_PositionBeyondFarReach_IsClamped()
+        [UnityTest]
+        public IEnumerator ClampToReachEnvelope_PositionBeyondFarReach_IsClamped()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var position = -2.0f * System.Numerics.Vector3.UnitZ;
             var (clamped, wasClamped) = CoordinateSystem.ClampToReachEnvelope(position);
 
@@ -50,18 +61,22 @@ namespace Faultline.Tests.PlayMode
             Assert.That(distance, Is.LessThanOrEqualTo(CoordinateSystem.FarReachM + 0.001f));
         }
 
-        [Test]
-        public void ClampToReachEnvelope_PositionWithinEnvelope_IsNotClamped()
+        [UnityTest]
+        public IEnumerator ClampToReachEnvelope_PositionWithinEnvelope_IsNotClamped()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var position = -0.50f * System.Numerics.Vector3.UnitZ;
             var (clamped, wasClamped) = CoordinateSystem.ClampToReachEnvelope(position);
 
             Assert.That(wasClamped, Is.False);
         }
 
-        [Test]
-        public void SpatialZones_DefaultPositions_AreWithinReach()
+        [UnityTest]
+        public IEnumerator SpatialZones_DefaultPositions_AreWithinReach()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             foreach (var zone in new[]
             {
                 SpatialZones.Centre,
@@ -76,9 +91,11 @@ namespace Faultline.Tests.PlayMode
             }
         }
 
-        [Test]
-        public void PanelAnchor_CreatesAnchor_InAssignedZone()
+        [UnityTest]
+        public IEnumerator PanelAnchor_CreatesAnchor_InAssignedZone()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var anchor = new PanelAnchor(
                 "panel-incident-detail",
                 SpatialZone.Right,
@@ -88,9 +105,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(anchor.Zone, Is.EqualTo(SpatialZone.Right));
         }
 
-        [Test]
-        public void PanelAnchorManager_RegistersAndRetrievesAnchor()
+        [UnityTest]
+        public IEnumerator PanelAnchorManager_RegistersAndRetrievesAnchor()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var manager = new PanelAnchorManager();
             var anchor = new PanelAnchor(
                 "panel-evidence",

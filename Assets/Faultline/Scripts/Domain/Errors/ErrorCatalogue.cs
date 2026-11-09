@@ -79,8 +79,8 @@ namespace Faultline.Domain.Errors
     public static class ErrorCatalogue
     {
         private static Error Make(string code, string message, ErrorSeverity severity = ErrorSeverity.Error,
-            Recoverability recoverability = Recoverability.Recoverable, string userGuidance = null,
-            IDictionary<string, object> diagnosticContext = null, string correlationId = null) =>
+            string correlationId = null, Recoverability recoverability = Recoverability.Recoverable,
+            string userGuidance = null, IDictionary<string, object> diagnosticContext = null) =>
             new Error(code, message, severity, correlationId, recoverability, userGuidance, diagnosticContext);
 
         // ------------------------------------------------------------------

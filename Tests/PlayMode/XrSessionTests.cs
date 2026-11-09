@@ -1,5 +1,7 @@
 namespace Faultline.Tests.PlayMode
 {
+    using System.Collections;
+    using UnityEngine.TestTools;
     using Faultline.Domain;
     using Faultline.XR;
     using NUnit.Framework;
@@ -8,14 +10,17 @@ namespace Faultline.Tests.PlayMode
     /// PlayMode tests for the XR session lifecycle:
     /// session init, hand tracking availability.
     ///
-    /// Pure C# — no UnityEngine, no UnityEditor.
+    /// Domain logic is pure C#; the tests themselves run as PlayMode
+    /// coroutines under Unity's test framework.
     /// </summary>
     [TestFixture]
     public sealed class XrSessionTests
     {
-        [Test]
-        public void Initialize_WhenNotInitialized_SucceedsAndMarksAvailable()
+        [UnityTest]
+        public IEnumerator Initialize_WhenNotInitialized_SucceedsAndMarksAvailable()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             var result = session.Initialize();
 
@@ -23,9 +28,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(session.IsAvailable, Is.False);
         }
 
-        [Test]
-        public void Initialize_Idempotent_SucceedsOnRepeatedCalls()
+        [UnityTest]
+        public IEnumerator Initialize_Idempotent_SucceedsOnRepeatedCalls()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             var first = session.Initialize();
             var second = session.Initialize();
@@ -34,9 +41,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(second.IsSuccess, Is.True);
         }
 
-        [Test]
-        public void StartSession_AfterInitialize_MarksSessionAvailable()
+        [UnityTest]
+        public IEnumerator StartSession_AfterInitialize_MarksSessionAvailable()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
             var result = session.StartSession();
@@ -45,9 +54,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(session.IsAvailable, Is.True);
         }
 
-        [Test]
-        public void StartSession_BeforeInitialize_Rejected()
+        [UnityTest]
+        public IEnumerator StartSession_BeforeInitialize_Rejected()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             var result = session.StartSession();
 
@@ -55,9 +66,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(session.IsAvailable, Is.False);
         }
 
-        [Test]
-        public void EndSession_AfterStart_ClearsAvailability()
+        [UnityTest]
+        public IEnumerator EndSession_AfterStart_ClearsAvailability()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
             session.StartSession();
@@ -67,9 +80,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(session.IsAvailable, Is.False);
         }
 
-        [Test]
-        public void GetHandTrackingState_AfterStart_ReturnsHandTrackingState()
+        [UnityTest]
+        public IEnumerator GetHandTrackingState_AfterStart_ReturnsHandTrackingState()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
             session.StartSession();
@@ -82,18 +97,22 @@ namespace Faultline.Tests.PlayMode
             Assert.That(state.Value.Right.Status, Is.EqualTo(HandTrackingStatus.Available));
         }
 
-        [Test]
-        public void GetHandTrackingState_WithoutSession_ReturnsFailure()
+        [UnityTest]
+        public IEnumerator GetHandTrackingState_WithoutSession_ReturnsFailure()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             var state = session.GetHandTrackingState();
 
             Assert.That(state.IsSuccess, Is.False);
         }
 
-        [Test]
-        public void IsHandTrackingAvailable_ReflectsSupportedFlag()
+        [UnityTest]
+        public IEnumerator IsHandTrackingAvailable_ReflectsSupportedFlag()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
 

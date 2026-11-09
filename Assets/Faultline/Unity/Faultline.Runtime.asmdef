@@ -1,0 +1,40 @@
+{
+  "name": "Faultline.Runtime",
+  "rootNamespace": "Faultline.Runtime",
+  "references": [
+    "Faultline.Domain",
+    "Faultline.DesignSystem",
+    "Faultline.App",
+    "Faultline.Agents",
+    "Faultline.Incidents",
+    "Faultline.Infrastructure",
+    "Faultline.Integrations",
+    "Faultline.Interaction",
+    "Faultline.Observability",
+    "Faultline.Persistence",
+    "Faultline.Presentation",
+    "Faultline.Remediation",
+    "Faultline.Spatial",
+    "Faultline.XR",
+    "Unity.XR.Management",
+    "Unity.XR.OpenXR",
+    "Unity.XR.Hands",
+    "Unity.XR.MetaOpenXR",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.render-pipelines.universal",
+      "expression": "17.0",
+      "define": "FAULTLINE_URP"
+    }
+  ],
+  "noEngineReferences": false
+}

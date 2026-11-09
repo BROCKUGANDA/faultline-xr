@@ -80,6 +80,25 @@ const panels: PanelRegistration[] = [
 const sfx = new Sfx();
 const cameraHomePosition = cameraRig.position.clone();
 const cameraHomeQuaternion = cameraRig.quaternion.clone();
+const cameraHomeRotation = camera.quaternion.clone();
+// Desktop preview moves the rig slightly back and up (camera sits at 1.6/0.05 inside
+// the rig, so world eye becomes ~1.72/0.18) and pitches the camera down, keeping the
+// seated-height panels (including their primary buttons) inside the frustum at common
+// review window sizes. XR sessions override the camera pose.
+const DESKTOP_PITCH_X = -0.46;
+const DESKTOP_RIG_POSITION = new THREE.Vector3(0, 0.06, 0.12);
+
+function applyCameraPitch(): void {
+  camera.quaternion.copy(cameraHomeRotation);
+  if (!renderer.xr.isPresenting) {
+    camera.rotateX(DESKTOP_PITCH_X);
+    cameraRig.position.copy(DESKTOP_RIG_POSITION);
+  }
+}
+function applyXrPose(): void {
+  camera.quaternion.copy(cameraHomeRotation);
+  cameraRig.position.copy(cameraHomePosition);
+}
 const actionHomePosition = action.group.position.clone();
 const actionHomeQuaternion = action.group.quaternion.clone();
 const timelineHomePosition = timeline.group.position.clone();
@@ -88,6 +107,7 @@ const timelineHomeQuaternion = timeline.group.quaternion.clone();
 function resetView(): void {
   cameraRig.position.copy(cameraHomePosition);
   cameraRig.quaternion.copy(cameraHomeQuaternion);
+  applyCameraPitch();
   action.group.position.copy(actionHomePosition);
   action.group.quaternion.copy(actionHomeQuaternion);
   timeline.group.position.copy(timelineHomePosition);
@@ -162,6 +182,7 @@ function enterDesktopMode(): void {
   if (boot) boot.hidden = true;
   if (desktopHint) desktopHint.hidden = false;
   interaction.enabled = true;
+  applyCameraPitch();
   status('Desktop preview ready.');
   app.refresh();
 }
@@ -171,6 +192,7 @@ function enterXrMode(): void {
   if (boot) boot.hidden = true;
   if (desktopHint) desktopHint.hidden = true;
   interaction.enabled = true;
+  applyXrPose();
   app.refresh();
 }
 
@@ -214,6 +236,7 @@ renderer.xr.addEventListener('sessionend', () => {
   status('Returned to desktop.');
   if (desktopHint) desktopHint.hidden = false;
   interaction.enabled = entered;
+  applyCameraPitch();
   app.refresh();
 });
 

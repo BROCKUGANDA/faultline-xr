@@ -23,13 +23,13 @@ namespace Faultline.Interaction
     public sealed class GestureInterpreter
     {
         // --- Tunable thresholds (PRD Interaction Guidelines §2) ---
-        private readonly float _pinchConfidenceThreshold = 0.70f;
-        private readonly long _pinchDebounceTicks = TimeSpan.FromMilliseconds(60).Ticks;
-        private readonly long _grabHysteresisTicks = TimeSpan.FromMilliseconds(120).Ticks;
-        private readonly long _releaseGraceTicks = TimeSpan.FromMilliseconds(100).Ticks;
-        private readonly float _twoHandScaleMinDeltaM = 0.02f; // 2 cm
-        private readonly long _pointDwellTicks = TimeSpan.FromMilliseconds(800).Ticks;
-        private readonly float _pointConfidenceThreshold = 0.60f;
+        private float _pinchConfidenceThreshold = 0.70f;
+        private long _pinchDebounceTicks = TimeSpan.FromMilliseconds(60).Ticks;
+        private long _grabHysteresisTicks = TimeSpan.FromMilliseconds(120).Ticks;
+        private long _releaseGraceTicks = TimeSpan.FromMilliseconds(100).Ticks;
+        private float _twoHandScaleMinDeltaM = 0.02f; // 2 cm
+        private long _pointDwellTicks = TimeSpan.FromMilliseconds(800).Ticks;
+        private float _pointConfidenceThreshold = 0.60f;
 
         // --- Gesture state ---
         private bool _leftPinchActive;
@@ -260,7 +260,7 @@ namespace Faultline.Interaction
                 // A grab ending emits ReleaseNode; a bare select ends silently.
                 if (emittedRelease)
                 {
-                    return InteractionCommand.ReleaseNode(_hoveredNodeId, hand.Side.ToString(), hand.Position);
+                    return InteractionCommand.ReleaseNode(_hoveredNodeId, hand.Side.ToString());
                 }
                 return null;
             }

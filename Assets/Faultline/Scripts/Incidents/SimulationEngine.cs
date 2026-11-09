@@ -61,7 +61,7 @@ namespace Faultline.Incidents
 
         private SimulationSnapshot _lastCheckpoint;
 
-        public int Tick => _tick;
+        public int TickCount => _tick;
         public string ScenarioId => _scenarioId;
         public string RootCauseNodeId => _rootCauseNodeId;
         public IReadOnlyDictionary<string, ServiceNode> Nodes => _nodes;
@@ -199,8 +199,9 @@ namespace Faultline.Incidents
             {
                 foreach (var evId in eventIds)
                 {
-                    EmitTelemetry("simulation", TelemetrySeverity.Information,
-                        "Remediation applied.", "recovery_applied", evId.ToString());
+                    EmitTelemetry(serviceId: "simulation", severity: TelemetrySeverity.Information,
+                        message: $"Remediation applied for event {evId}.",
+                        metricName: "recovery_applied", metricValue: healthDelta);
                 }
             }
 
@@ -212,6 +213,14 @@ namespace Faultline.Incidents
 
         public Faultline.Domain.IInfrastructureGraph GraphView =>
             new InfrastructureGraphView(_graph);
+
+        /// <summary>
+        /// The concrete graph behind <see cref="GraphView"/>. Reachability and
+        /// blast-radius analysis (<see cref="InfrastructureGraph.AnalyzeImpact"/>)
+        /// live on the graph itself, so investigation callers need this in
+        /// addition to the read-only interface.
+        /// </summary>
+        public InfrastructureGraph Graph => _graph;
 
         private void GenerateTelemetry()
         {

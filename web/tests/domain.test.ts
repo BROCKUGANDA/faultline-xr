@@ -9,6 +9,7 @@ import {
   loadSave,
   statusForHealth,
   writeSave,
+  type SaveData,
 } from '../src/domain';
 
 describe('CASCADE scenario', () => {
@@ -135,35 +136,116 @@ describe('RemediationService', () => {
     if (!premature.ok) expect(premature.code).toBe('FL-RM-0080');
     expect(service.verify(proposal.value.id, simulation).ok).toBe(false);
   });
+
+  it('keeps verification retryable after a failed check', () => {
+    // Degrade the graph with an extended incident before remediating.
+    const simulation = new Simulation(7);
+    for (let i = 0; i < 120; i += 1) simulation.tickOnce();
+    const service = new RemediationService();
+    const proposal = service.propose('incident-1', 'database');
+    if (!proposal.ok) throw new Error('Proposal failed');
+    service.approve(proposal.value.id, 'operator@faultline');
+    service.execute(proposal.value.id, simulation);
+
+    const before = simulation.aggregateHealth;
+    if (before < 0.8) {
+      const failed = service.verify(proposal.value.id, simulation);
+      expect(failed).toEqual({ ok: true, value: false });
+      expect(proposal.value.status).toBe('executed');
+    }
+
+    // Recovery ticks heal the remaining services; verification must pass.
+    for (let i = 0; i < 80; i += 1) simulation.tickOnce();
+    const passed = service.verify(proposal.value.id, simulation);
+    expect(passed).toEqual({ ok: true, value: true });
+    expect(proposal.value.status).toBe('verified');
+  });
+
+  it('stops the root-cause decay after remediation so verification can pass', () => {
+    const simulation = new Simulation(3);
+    const service = new RemediationService();
+    const proposal = service.propose('incident-1', 'database');
+    if (!proposal.ok) throw new Error('Proposal failed');
+    service.approve(proposal.value.id, 'operator@faultline');
+    service.execute(proposal.value.id, simulation);
+
+    const rootAfterExecute = simulation.rootHealth;
+    for (let i = 0; i < 40; i += 1) simulation.tickOnce();
+    // The fault is fixed: the root must not decay back below the threshold.
+    expect(simulation.rootHealth).toBeGreaterThanOrEqual(rootAfterExecute);
+    expect(simulation.rootHealth).toBeGreaterThanOrEqual(0.9);
+    const verified = service.verify(proposal.value.id, simulation);
+    expect(verified).toEqual({ ok: true, value: true });
+  });
 });
 
 describe('SaveData', () => {
-  it('retains runtime settings and run history', () => {
-    const saved = {
-      version: 1,
-      settings: {
-        textScale: 1.15,
-        highContrast: true,
-        reducedMotion: true,
-        audio: false,
-        leftHanded: true,
+  const sampleSave = (): SaveData => ({
+    version: 1,
+    settings: {
+      textScale: 1.15,
+      highContrast: true,
+      reducedMotion: true,
+      audio: false,
+      leftHanded: true,
+    },
+    runs: [
+      {
+        at: 123,
+        scenarioId: 'cascade-42',
+        resolved: true,
+        durationMs: 120000,
+        agentsDispatched: 2,
+        averageConfidence: 0.9,
+        healthRecovered: 0.4,
+        incidentId: 'incident-1',
       },
-      runs: [
-        {
-          at: 123,
-          scenarioId: 'cascade-42',
-          resolved: true,
-          durationMs: 120000,
-          agentsDispatched: 2,
-          averageConfidence: 0.9,
-          healthRecovered: 0.4,
-          incidentId: 'incident-1',
-        },
-      ],
-    };
-    const result = writeSave(saved);
+    ],
+  });
+
+  const memoryStorage = (): Storage => {
+    const map = new Map<string, string>();
+    return {
+      getItem: (key: string) => map.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        map.set(key, String(value));
+      },
+      removeItem: (key: string) => {
+        map.delete(key);
+      },
+      clear: () => {
+        map.clear();
+      },
+      key: (index: number) => [...map.keys()][index] ?? null,
+      get length() {
+        return map.size;
+      },
+    } as Storage;
+  };
+
+  const brokenStorage = (): Storage =>
+    ({
+      getItem: () => {
+        throw new Error('storage denied');
+      },
+      setItem: () => {
+        throw new Error('storage denied');
+      },
+    }) as unknown as Storage;
+
+  it('round-trips settings and run history through injected storage', () => {
+    const store = memoryStorage();
+    const saved = sampleSave();
+    const written = writeSave(saved, store);
+    expect(written.ok).toBe(true);
+    expect(loadSave(store)).toEqual(saved);
+  });
+
+  it('degrades gracefully with FL-PS-0100 when storage throws', () => {
+    const store = brokenStorage();
+    const result = writeSave(sampleSave(), store);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.code).toBe('FL-PS-0100');
-    expect(loadSave()).toEqual(defaultSave());
+    expect(loadSave(store)).toEqual(defaultSave());
   });
 });

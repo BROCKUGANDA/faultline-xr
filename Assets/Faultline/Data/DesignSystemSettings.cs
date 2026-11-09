@@ -1,6 +1,5 @@
 namespace Faultline.DesignSystem
 {
-    using System;
     using Faultline.Domain;
 
     /// <summary>

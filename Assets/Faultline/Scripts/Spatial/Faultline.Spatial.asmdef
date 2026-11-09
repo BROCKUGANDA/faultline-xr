@@ -3,6 +3,7 @@
   "rootNamespace": "Faultline.Spatial",
   "references": [
     "Faultline.Domain",
+    "Faultline.DesignSystem",
     "Faultline.Infrastructure",
     "Faultline.XR",
     "Faultline.Interaction",

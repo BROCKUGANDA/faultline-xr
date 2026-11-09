@@ -1,5 +1,7 @@
 namespace Faultline.Domain
 {
+    using System.Collections.Generic;
+
     using System;
 
     /// <summary>

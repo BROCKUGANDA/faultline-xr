@@ -32,40 +32,4 @@ namespace Faultline.Presentation
         event EventHandler<TextSizeChangedEventArgs> TextSizeChanged;
         event EventHandler<HighContrastChangedEventArgs> HighContrastChanged;
     }
-
-    public sealed class SeatedOperationChangedEventArgs : EventArgs
-    {
-        public bool Enabled { get; }
-        public SeatedOperationChangedEventArgs(bool enabled)
-        {
-            Enabled = enabled;
-        }
-    }
-
-    public sealed class ReducedMotionChangedEventArgs : EventArgs
-    {
-        public bool Enabled { get; }
-        public ReducedMotionChangedEventArgs(bool enabled)
-        {
-            Enabled = enabled;
-        }
-    }
-
-    public sealed class TextSizeChangedEventArgs : EventArgs
-    {
-        public float Scale { get; }
-        public TextSizeChangedEventArgs(float scale)
-        {
-            Scale = scale;
-        }
-    }
-
-    public sealed class HighContrastChangedEventArgs : EventArgs
-    {
-        public bool Enabled { get; }
-        public HighContrastChangedEventArgs(bool enabled)
-        {
-            Enabled = enabled;
-        }
-    }
 }

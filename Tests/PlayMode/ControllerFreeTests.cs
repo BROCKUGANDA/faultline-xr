@@ -1,5 +1,7 @@
 namespace Faultline.Tests.PlayMode
 {
+    using System.Collections;
+    using UnityEngine.TestTools;
     using Faultline.Interaction;
     using NUnit.Framework;
 
@@ -7,14 +9,17 @@ namespace Faultline.Tests.PlayMode
     /// PlayMode tests for controller-free interaction:
     /// every critical action reachable without controllers.
     ///
-    /// Pure C# — no UnityEngine, no UnityEditor.
+    /// Domain logic is pure C#; the tests themselves run as PlayMode
+    /// coroutines under Unity's test framework.
     /// </summary>
     [TestFixture]
     public sealed class ControllerFreeTests
     {
-        [Test]
-        public void ValidateCoverage_AllCriticalActionsRegistered_Succeeds()
+        [UnityTest]
+        public IEnumerator ValidateCoverage_AllCriticalActionsRegistered_Succeeds()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
             validator.RegisterCriticalAction("SelectNode", "target-node-1");
             validator.RegisterCriticalAction("GrabNode", "target-node-2");
@@ -30,9 +35,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(result.Value, Is.True);
         }
 
-        [Test]
-        public void ValidateCoverage_NoRegistrations_SucceedsWithEmptyCoverage()
+        [UnityTest]
+        public IEnumerator ValidateCoverage_NoRegistrations_SucceedsWithEmptyCoverage()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
 
             var result = validator.ValidateCoverage();
@@ -41,9 +48,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(result.Value, Is.True);
         }
 
-        [Test]
-        public void TryGetTarget_ReturnsRegisteredTarget()
+        [UnityTest]
+        public IEnumerator TryGetTarget_ReturnsRegisteredTarget()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
             validator.RegisterCriticalAction("ClosePanel", "target-close");
 
@@ -53,9 +62,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(targetId, Is.EqualTo("target-close"));
         }
 
-        [Test]
-        public void TryGetTarget_UnregisteredAction_ReturnsFalse()
+        [UnityTest]
+        public IEnumerator TryGetTarget_UnregisteredAction_ReturnsFalse()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
 
             var found = validator.TryGetTarget("DoesNotExist", out var targetId);
@@ -64,18 +75,22 @@ namespace Faultline.Tests.PlayMode
             Assert.That(targetId, Is.Null);
         }
 
-        [Test]
-        public void RegisteredCriticalActions_ContainsRegisteredIds()
+        [UnityTest]
+        public IEnumerator RegisteredCriticalActions_ContainsRegisteredIds()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
             validator.RegisterCriticalAction("DispatchAgent", "target-dispatch");
 
             Assert.That(validator.RegisteredCriticalActions.Contains("DispatchAgent"), Is.True);
         }
 
-        [Test]
-        public void Reset_ClearsRegistrations()
+        [UnityTest]
+        public IEnumerator Reset_ClearsRegistrations()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var validator = new ControllerFreeValidator();
             validator.RegisterCriticalAction("SelectNode", "target-node-1");
             validator.Reset();

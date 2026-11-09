@@ -1,5 +1,7 @@
 namespace Faultline.Tests.PlayMode
 {
+    using System.Collections;
+    using UnityEngine.TestTools;
     using Faultline.Domain;
     using Faultline.Interaction;
     using Faultline.XR;
@@ -9,14 +11,17 @@ namespace Faultline.Tests.PlayMode
     /// PlayMode tests for hand interaction:
     /// pinch selection, grab/release, tracking loss/recovery.
     ///
-    /// Pure C# — no UnityEngine, no UnityEditor.
+    /// Domain logic is pure C#; the tests themselves run as PlayMode
+    /// coroutines under Unity's test framework.
     /// </summary>
     [TestFixture]
     public sealed class HandInteractionTests
     {
-        [Test]
-        public void PinchSelection_WhenPinchActive_EmitsSelectNodeCommand()
+        [UnityTest]
+        public IEnumerator PinchSelection_WhenPinchActive_EmitsSelectNodeCommand()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var interpreter = new GestureInterpreter();
             var left = new HandData(
                 HandSide.Left, HandTrackingStatus.Tracking,
@@ -34,9 +39,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(command.Type, Is.EqualTo(InteractionCommandType.SelectNode));
         }
 
-        [Test]
-        public void Grab_WhenSustainedPinch_EmitsGrabNodeCommand()
+        [UnityTest]
+        public IEnumerator Grab_WhenSustainedPinch_EmitsGrabNodeCommand()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var interpreter = new GestureInterpreter();
             var left = new HandData(
                 HandSide.Left, HandTrackingStatus.Tracking,
@@ -54,9 +61,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(command.Type, Is.EqualTo(InteractionCommandType.GrabNode));
         }
 
-        [Test]
-        public void Release_WhenPinchEnds_EmitsReleaseNodeCommand()
+        [UnityTest]
+        public IEnumerator Release_WhenPinchEnds_EmitsReleaseNodeCommand()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var interpreter = new GestureInterpreter();
             var left = new HandData(
                 HandSide.Left, HandTrackingStatus.Tracking,
@@ -74,9 +83,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(command.Type, Is.EqualTo(InteractionCommandType.ReleaseNode));
         }
 
-        [Test]
-        public void TrackingLoss_LeftHandLost_TracksLostEvent()
+        [UnityTest]
+        public IEnumerator TrackingLoss_LeftHandLost_TracksLostEvent()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
             session.StartSession();
@@ -89,9 +100,11 @@ namespace Faultline.Tests.PlayMode
             Assert.That(state.Value.AnyLost, Is.True);
         }
 
-        [Test]
-        public void TrackingRecovery_AfterLoss_ReturnsToTracking()
+        [UnityTest]
+        public IEnumerator TrackingRecovery_AfterLoss_ReturnsToTracking()
         {
+            // Runs one PlayMode frame so the assertions observe a live scene loop.
+            yield return null;
             var session = new XrSession();
             session.Initialize();
             session.StartSession();

@@ -1,0 +1,32 @@
+{
+  "name": "Faultline.Editor",
+  "rootNamespace": "Faultline.Editor",
+  "references": [
+    "Faultline.Runtime",
+    "Faultline.Domain",
+    "Faultline.DesignSystem",
+    "Faultline.App",
+    "Faultline.XR",
+    "Faultline.Spatial",
+    "Faultline.Presentation",
+    "Faultline.Interaction",
+    "Unity.XR.Management",
+    "Unity.XR.Management.Editor",
+    "Unity.XR.OpenXR",
+    "Unity.XR.OpenXR.Editor",
+    "Unity.XR.Hands",
+    "Unity.XR.CoreUtils",
+    "Unity.XR.MetaOpenXR"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
