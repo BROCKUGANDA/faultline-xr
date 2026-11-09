@@ -4,8 +4,23 @@
   "sourceDirectory": "web",
   "outputDirectory": "web/dist",
   "publicUrl": "<PUBLIC_HTTPS_URL>",
+  "publicUrlStatus": "BLOCKED — no deployment URL exists yet. .github/workflows/deploy-pages.yml targets self-hosted runner 'faultline-xr'; merge to main + green run required, or deploy web/dist/ to any HTTPS host. Verify full journey over HTTPS before judging.",
   "videoUrl": "<PUBLIC_YOUTUBE_OR_VIMEO_URL>",
-  "buildTimestamp": "<ISO_8601_UTC_TIMESTAMP>",
+  "videoUrlStatus": "BLOCKED (user) — video/demo/out/faultline-xr-demo.mp4 (60,252,317 bytes) is rendered but not uploaded/public",
+  "buildTimestamp": "2026-11-10T02:41:00Z",
+  "sourceCommit": "ea4bcdf",
+  "toolchain": {
+    "node": "v26.7.0",
+    "npm": "11.19.0",
+    "vite": "7.3.8",
+    "typescript": "5.9.3",
+    "three": "0.187.0"
+  },
+  "contentHashesSHA256": {
+    "web/dist/index.html": "2FA0AB5B1E728433677DF28F65118A5322958885F52FF1D220CC6905FD9D4F64",
+    "web/dist/assets/index-BULeRVi1.js": "7324DBD74B65A2DFAF2F37A3CF1BC6A6D076EDFBCA6987C596CD88F611DD0F2D",
+    "web/dist/assets/index-7CHndsS2.css": "C3F86BC17B8570A1DB927D7A1E77B298D4303BE7425E1D9DDA87076882DD80C2"
+  },
   "track": "Productivity",
   "division": "New Experience",
   "targetPlatform": "Meta Quest Browser / WebXR",
@@ -13,26 +28,26 @@
   "testSummary": {
     "typecheck": {
       "passed": true,
-      "notes": "npx tsc --noEmit"
+      "notes": "npm run build runs tsc --noEmit first; passes on 2026-11-10"
     },
     "domainTests": {
-      "total": 12,
-      "passed": 12,
+      "total": 15,
+      "passed": 15,
       "failed": 0,
-      "notes": "npm test -- --run"
+      "notes": "npm test -- --run on 2026-11-10 (Node 26 ambient localStorage exposed a 2026-11-09 test fragility; test now injects storage explicitly)"
     },
     "productionBuild": {
       "passed": true,
-      "notes": "npm run build; output in web/dist/"
+      "notes": "npm run build; output in web/dist/ (index-BULeRVi1.js, 610,259 bytes / 156.93 kB gzip)"
     },
     "desktopSmokeTest": {
-      "executed": false,
-      "notes": "Build compiles; a browser smoke test is still recommended."
+      "executed": true,
+      "notes": "2026-11-10 headless Chromium of web/dist/: 0 console errors, 0 page errors; clicked through welcome -> scenario -> live workspace -> Open incident (screenshots in audit-2026-11-10/). Desktop preview remains a review aid, not the judged experience."
     },
     "xrDevice": {
       "executed": false,
-      "notes": "Requires Meta Quest Browser on a Meta Quest headset."
+      "notes": "Requires Meta Quest Browser on a Meta Quest headset — NOT RUN. Device behaviour is unverified."
     }
   },
-  "notes": "Deploy web/dist/index.html and web/dist/assets together over HTTPS. The Unity/C# tree is reference material only and is not the submission build."
+  "notes": "Deploy web/dist/index.html and web/dist/assets together over HTTPS. The Unity/C# tree is reference material only and is not the submission build. Rebuild before submission freezes; do not overwrite a known-good deploy with an unverified build."
 }
