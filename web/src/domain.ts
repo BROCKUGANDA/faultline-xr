@@ -130,7 +130,14 @@ let idCounter = 0;
 
 export function makeId(prefix: string): string {
   idCounter += 1;
-  return `${prefix}-${Date.now().toString(36)}-${idCounter.toString(36)}`;
+  // Deterministic counter with a monotonic sequence prefix — no wall-clock
+  // randomness. IDs are equal to their creation order so re-runs of the same
+  // seeded scenario produce identical identifiers.
+  return `${prefix}-${idCounter.toString(36).padStart(4, "0")}`;
+}
+
+export function resetIdCounter(): void {
+  idCounter = 0;
 }
 
 /** Small deterministic PRNG so a run can be reproduced from its seed. */
@@ -307,7 +314,7 @@ export class Simulation {
     const event: TimelineEvent = {
       id: makeId('ev'),
       tick: this.tickCount,
-      at: Date.now(),
+      at: this.tickCount * 10_000,
       code,
       title,
       detail,
@@ -354,7 +361,7 @@ export class IncidentLifecycle {
       nodeId,
       severity,
       state: 'detected',
-      createdAt: Date.now(),
+      createdAt: 0,
       transitions: [],
     });
   }
@@ -424,14 +431,21 @@ export class AgentOrchestrator {
   private tasks = new Map<string, AgentTask>();
   private findings = new Map<string, Finding>();
   private dispatchedRoles = new Set<AgentRole>();
+  private seq = 0;
 
   dispatch(role: AgentRole, incidentId: string): Result<AgentTask> {
+    if (!incidentId) return fail('FL-SM-0090', 'Incident id is required.');
+    if (this.dispatchedRoles.has(role)) {
+      const existing = [...this.tasks.values()].find((t) => t.role === role && t.incidentId === incidentId);
+      if (existing) return ok(existing);
+    }
+    this.seq += 1;
     const task: AgentTask = {
       id: makeId('task'),
       role,
       incidentId,
       status: 'running',
-      startedAt: Date.now(),
+      startedAt: this.seq,
     };
     this.tasks.set(task.id, task);
     this.dispatchedRoles.add(role);
@@ -489,6 +503,12 @@ export class AgentOrchestrator {
 
 export class RemediationService {
   private proposals = new Map<string, RemediationProposal>();
+  private now = () => 0;
+
+  /** Inject a clock for deterministic tests. Defaults to a fixed epoch so approvals never expire spuriously. */
+  setClock(fn: () => number): void {
+    this.now = fn;
+  }
 
   propose(incidentId: string, nodeId: string, action = 'RestartService'): Result<RemediationProposal> {
     if (!incidentId) return fail('FL-SM-0090', 'Incident id is required.');
@@ -498,8 +518,8 @@ export class RemediationService {
       nodeId,
       action,
       status: 'proposed',
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 10 * 60_000,
+      createdAt: this.now(),
+      expiresAt: this.now() + 10 * 60_000,
     };
     this.proposals.set(proposal.id, proposal);
     return ok(proposal);
@@ -515,11 +535,11 @@ export class RemediationService {
     if (proposal.status !== 'proposed') {
       return fail('FL-RM-0081', `Proposal ${id} cannot be approved from status ${proposal.status}.`);
     }
-    if (Date.now() > proposal.expiresAt) return fail('FL-RM-0082', 'Approval window expired.');
+    if (this.now() > proposal.expiresAt) return fail('FL-RM-0082', 'Approval window expired.');
     if (!approvedBy.trim()) return fail('FL-SM-0091', 'Approver identity is required.');
     proposal.status = 'approved';
     proposal.approvedBy = approvedBy;
-    proposal.approvedAt = Date.now();
+    proposal.approvedAt = this.now();
     return ok(proposal);
   }
 
@@ -536,6 +556,9 @@ export class RemediationService {
   execute(id: string, simulation: Simulation): Result<RecoveryResult> {
     const proposal = this.proposals.get(id);
     if (!proposal) return fail('FL-RM-0080', `Proposal not found: ${id}`);
+    if (proposal.status === 'executed' || proposal.status === 'verified') {
+      return fail('FL-RM-0083', `Proposal ${id} has already been executed.`);
+    }
     if (proposal.status !== 'approved') {
       return fail('FL-RM-0080', `Proposal ${id} is not executable (status=${proposal.status}).`);
     }
@@ -551,7 +574,7 @@ export class RemediationService {
       success: true,
       healthDelta: delta.value,
       verified: false,
-      at: Date.now(),
+      at: this.now(),
     };
     proposal.recovery = recovery;
     return ok(recovery);

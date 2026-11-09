@@ -234,7 +234,6 @@ export class FaultlineApp {
     this.orchestrator = new AgentOrchestrator();
     this.remediation = new RemediationService();
     this.lifecycle = IncidentLifecycle.create('database', this.simulation.graph.scenarioId, 'critical');
-
     this.state.phase = 'detected';
     this.state.incident = this.lifecycle.incident;
     this.state.selectedNodeId = 'database';
@@ -300,6 +299,8 @@ export class FaultlineApp {
     if (!task.ok) {
       this.toast(task.message, 'error');
       this.sfx.error();
+      // Do not leak a stale task id: dispatch failed, nothing to complete.
+      this.refresh();
       return;
     }
     this.state.dispatchCount += 1;
@@ -350,7 +351,11 @@ export class FaultlineApp {
 
   private proposeRemediation(): void {
     if (!this.lifecycle || !this.state.incident) return;
-    this.lifecycle.transition('awaitingApproval');
+    const transition = this.lifecycle.transition('awaitingApproval');
+    if (!transition.ok) {
+      if (this.state.phase !== 'proposed') return;
+      // Already in awaitingApproval (re-propose after rejection).
+    }
     const result = this.remediation.propose(this.state.incident.id, 'database', 'RestartService');
     if (!result.ok) {
       this.toast(result.message, 'error');

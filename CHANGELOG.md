@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.0.1] — 2026-11-09 — Determinism + hardening (verified)
+
+### Fixed
+
+- `web/src/domain.ts`: `makeId()` now uses a deterministic counter (no
+  `Date.now()` in IDs) so identical seeded runs produce identical IDs.
+- `Simulation.log()` timestamps no longer use wall-clock; timeline shows
+  elapsed ticks consistently.
+- `AgentOrchestrator.dispatch()` is idempotent in the domain layer itself:
+  repeated dispatch for the same role+incident returns the existing task
+  instead of creating duplicate tasks.
+- `RemediationService.execute()` returns `FL-RM-0083` on double-execution
+  (was `FL-RM-0080`) and approval expiry is controllable via injected clock.
+- `App.proposeRemediation()` no longer silently allows a second propose
+  after rejection without transitioning through `awaitingApproval` first.
+- `App.dispatchAgent()` refreshes the view on dispatch failure instead of
+  leaving stale task state.
+
+### Verified (2026-11-09)
+
+- `npx tsc --noEmit` — passes.
+- `npm test -- --run` — 12/12 domain tests pass.
+- `npm run build` — succeeds, output at `web/dist/` (609 KB JS / 157 KB gzip).
+
+### C# reference tree (health check)
+
+- Domain blockers fixed: `AgentTask.WithStatus()` stores the status,
+  `ServiceNode.NodeId` is now stable string, `CascadeScenario` no longer
+  uses `GetHashCode()`/`Guid.NewGuid()`, added `IClock`/`FixedClock`,
+  `AgentOrchestrator` + `RemediationService` implement their interfaces
+  with idempotency/retry/evidence wiring, `PersistenceService` round-trip
+  preserves session + progress. All EditMode + PlayMode tests converted
+  to real NUnit assertions. Unity compile still blocked (no Unity installed).
+
 ## [1.0.0] — 2026-11-09 — Playable WebXR submission
 
 ### Added
