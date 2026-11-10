@@ -8,7 +8,7 @@
   "videoUrl": "<PUBLIC_YOUTUBE_OR_VIMEO_URL>",
   "videoUrlStatus": "BLOCKED (user) — video/demo/out/faultline-xr-demo.mp4 (60,252,317 bytes) is rendered but not uploaded/public",
   "buildTimestamp": "2026-11-10T03:43:23Z",
-  "sourceCommit": "PENDING_POLISH_COMMIT",
+  "sourceCommit": "0650491",
   "toolchain": {
     "node": "v26.7.0",
     "npm": "11.19.0",
