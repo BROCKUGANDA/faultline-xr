@@ -20,11 +20,13 @@ New Experience
 
 ## Public WebXR URL
 
-`[PUBLIC_HTTPS_URL]`
+`[PUBLIC_HTTPS_URL]` — pending a 30-second entrant fix in GitHub: Settings → Pages → Custom domain → clear the stale entry (securevoiceai.me) → Save. The build is deployed and serving from branch `gh-pages` (Pages build green 2026-11-10); https://brockuganda.github.io/faultline-xr/ is the expected public URL once the domain is cleared. Assets load relative to the site root.
 
 ## Demonstration video URL
 
-`[PUBLIC_YOUTUBE_OR_VIMEO_URL]`
+https://github.com/BROCKUGANDA/faultline-xr/releases/download/v1.0.0-rc/faultline-xr-demo.mp4
+
+(GitHub release asset — public; downloads/plays on click rather than inline-streaming. Replace with a YouTube/Vimeo link if re-uploaded.)
 
 ## Description
 

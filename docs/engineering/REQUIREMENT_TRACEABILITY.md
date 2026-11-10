@@ -53,8 +53,8 @@ Statuses: `NOT_ASSESSED | PLANNED | IN_PROGRESS | BLOCKED | DONE_VERIFIED | DEFE
 
 | Item | Status | Notes |
 | --- | --- | --- |
-| Public HTTPS URL | **BLOCKED (ops/user)** | No URL recorded anywhere. `.github/workflows/deploy-pages.yml` targets self-hosted runner `faultline-xr`; runner online status unverifiable from here. Verify: merge to `main`, workflow run green, `https://<owner>.github.io/<repo>/` responds 200 and the full journey completes in a browser |
-| Public video link | BLOCKED (user) | Upload `video/demo/out/faultline-xr-demo.mp4` to YouTube (unlisted ok) and paste URL into the Devpost form |
+| Public HTTPS URL | **BLOCKED (30-second entrant fix)** | GitHub Pages site built green from branch `gh-pages` (2026-11-10, legacy mode; `deploy-pages.yml` self-hosted runner `faultline-xr` dead — 12h+ queued; bypassed). Blocker: repo Pages custom domain is stale (securevoiceai.me, an unrelated live product) — github.io URLs redirect there → 404. Fix: Settings → Pages → Custom domain → clear → Save; then `https://brockuganda.github.io/faultline-xr/` serves the build (dist paths are relative — verified) |
+| Public video link | **PUBLIC (2026-11-10)** | `https://github.com/BROCKUGANDA/faultline-xr/releases/download/v1.0.0-rc/faultline-xr-demo.mp4` — GitHub release asset (v1.0.0-rc), digest verified server-side against recorded SHA-256; 1m55s h264 1080p30. Inline-streaming requires YouTube/Vimeo re-upload (recommended) |
 | Quest Browser headset verification | BLOCKED (user) | Official FAQ: headset not required to enter. Desktop-preview e2e + honest device-matrix disclosure in submission text; device behaviour itself is **unverified** |
 | Devpost form submission | BLOCKED (user) | Draft at `submission/DEVPOST_SUBMISSION_FORM.md`; user account required |
 
