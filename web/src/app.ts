@@ -415,7 +415,10 @@ export class FaultlineApp {
   private executeRemediation(): void {
     const proposal = this.state.proposal;
     if (!proposal) return;
-    this.lifecycle?.transition('remediating');
+    const remediationTransition = this.lifecycle?.transition('remediating');
+    if (remediationTransition && !remediationTransition.ok) {
+      this.simulation.log('FL-IC-0051', 'Remediation state mismatch', 'Could not enter remediating state; proposal gate applies.', 'warning');
+    }
     const result = this.remediation.execute(proposal.id, this.simulation);
     if (!result.ok) {
       this.toast(result.message, 'error');
@@ -441,7 +444,10 @@ export class FaultlineApp {
   private verifyRecovery(): void {
     const proposal = this.state.proposal;
     if (!proposal) return;
-    this.lifecycle?.transition('verifying');
+    const verifyTransition = this.lifecycle?.transition('verifying');
+    if (verifyTransition && !verifyTransition.ok) {
+      this.simulation.log('FL-IC-0051', 'Verification state mismatch', 'Could not enter verifying state; proposal gate applies.', 'warning');
+    }
     const result = this.remediation.verify(proposal.id, this.simulation);
     if (!result.ok) {
       this.toast(result.message, 'error');

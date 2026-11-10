@@ -77,6 +77,11 @@ function fmtTime(at: number): string {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
 }
 
+function fmtSimTime(at: number): string {
+  const seconds = Math.max(0, Math.floor(at / 1000));
+  return `T+${seconds}s`;
+}
+
 function pct(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
@@ -94,9 +99,9 @@ function phaseLabel(phase: Phase): string {
     case 'approved':
       return 'APPROVED';
     case 'executed':
-      return 'EXECUTING';
+      return 'EXECUTED';
     case 'verified':
-      return 'VERIFYING';
+      return 'VERIFIED';
     case 'resolved':
       return 'RESOLVED';
     case 'rejected':
@@ -555,7 +560,7 @@ export function drawActionPanel(p: Painter, model: ScreenModel): void {
     case 'approved':
       p.text('APPROVED', x, y, { sizeMm: 2.9, color: COLORS.recoveryGreen, mono: true, weight: 700 });
       p.wrap(
-        `Signed off by the operator at ${fmtTime(state.proposal?.approvedAt ?? Date.now())}. Execution applies the restart, then verifies health before resolution.`,
+        `Signed off by the operator at ${fmtTime(Date.now())}. Execution applies the restart, then verifies health before resolution.`,
         x,
         y + 0.014,
         w,
@@ -638,7 +643,7 @@ export function drawTimelinePanel(p: Painter, model: ScreenModel): void {
             ? COLORS.recoveryGreen
             : COLORS.signalCyan;
     p.statusDot(x + 0.004, y + 0.006, color, 0.003);
-    p.text(fmtTime(event.at), x + 0.013, y, { sizeMm: 2.5, color: COLORS.mist, mono: true });
+    p.text(fmtSimTime(event.at), x + 0.013, y, { sizeMm: 2.5, color: COLORS.mist, mono: true });
     p.text(event.code, W - x, y, { sizeMm: 2.4, color, mono: true, align: 'right' });
     p.text(event.title, x + 0.013, y + 0.012, { sizeMm: 3.4, color: COLORS.ice, weight: 600 });
     p.wrap(event.detail, x + 0.013, y + 0.023, w - 0.013, {

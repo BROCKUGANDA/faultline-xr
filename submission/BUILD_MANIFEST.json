@@ -7,8 +7,8 @@
   "publicUrlStatus": "BLOCKED — no deployment URL exists yet. .github/workflows/deploy-pages.yml targets self-hosted runner 'faultline-xr'; merge to main + green run required, or deploy web/dist/ to any HTTPS host. Verify full journey over HTTPS before judging.",
   "videoUrl": "<PUBLIC_YOUTUBE_OR_VIMEO_URL>",
   "videoUrlStatus": "BLOCKED (user) — video/demo/out/faultline-xr-demo.mp4 (60,252,317 bytes) is rendered but not uploaded/public",
-  "buildTimestamp": "2026-11-10T03:10:39Z",
-  "sourceCommit": "5400085",
+  "buildTimestamp": "2026-11-10T03:43:23Z",
+  "sourceCommit": "PENDING_POLISH_COMMIT",
   "toolchain": {
     "node": "v26.7.0",
     "npm": "11.19.0",
@@ -17,8 +17,8 @@
     "three": "0.187.0"
   },
   "contentHashesSHA256": {
-    "web/dist/index.html": "5E52AD323ED604978DCA08A7312C65E12348366079212E35C9F4B9AFC6762E20",
-    "web/dist/assets/index-ZPDa1wTC.js": "814ABF59E1C726844106393606EED47E01DD32CC999E7E6AB57178331FA0BD4B",
+    "web/dist/index.html": "698BB6EB75F2B849923BED56994C1C42C557B3F10A9E342D6D0A0EE5279BE1CA",
+    "web/dist/assets/index-D-CIof2f.js": "8A69F3001A7DB9EBFFFC921D3FAD5681F7B45CC32C2AD8475C04673C5C2AA874",
     "web/dist/assets/index-7CHndsS2.css": "C3F86BC17B8570A1DB927D7A1E77B298D4303BE7425E1D9DDA87076882DD80C2"
   },
   "track": "Productivity",

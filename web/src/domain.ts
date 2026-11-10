@@ -660,10 +660,24 @@ export function loadSave(storage?: Storage): SaveData {
     if (!raw) return defaultSave();
     const parsed = JSON.parse(raw) as Partial<SaveData>;
     if (!parsed || parsed.version !== 1) return defaultSave();
+    const runs = (Array.isArray(parsed.runs) ? parsed.runs : [])
+      .filter(
+        (run): run is RunRecord =>
+          !!run
+          && typeof run === 'object'
+          && typeof run.scenarioId === 'string'
+          && typeof run.incidentId === 'string'
+          && Number.isFinite(run.at)
+          && Number.isFinite(run.durationMs)
+          && Number.isFinite(run.agentsDispatched)
+          && Number.isFinite(run.averageConfidence)
+          && Number.isFinite(run.healthRecovered)
+      )
+      .slice(0, 25);
     return {
       version: 1,
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
-      runs: Array.isArray(parsed.runs) ? parsed.runs.slice(0, 25) : [],
+      runs,
     };
   } catch {
     return defaultSave();

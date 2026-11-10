@@ -27,12 +27,20 @@ function status(message: string): void {
 
 status('Preparing renderer…');
 
-const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,
-  alpha: false,
-  powerPreference: 'high-performance',
-});
+let renderer: THREE.WebGLRenderer;
+try {
+  renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: false,
+    powerPreference: 'high-performance',
+  });
+} catch (error) {
+  // WebGL unavailable (blocked/older browser). Surface a plain-language message
+  // on the boot overlay instead of an uncaught exception and a blank screen.
+  status('This browser could not start WebGL. Open the deployed experience in Meta Quest Browser — that is the supported runtime.');
+  throw error;
+}
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
