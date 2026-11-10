@@ -1,0 +1,4 @@
+name: FAULTLINE XR
+description: Hands-first infrastructure-incident remediation for Meta Quest and WebXR.
+homepage: https://brockuganda.github.io/faultline-xr/
+topics: webxr, threejs, meta-quest, hand-tracking, vr, typescript
