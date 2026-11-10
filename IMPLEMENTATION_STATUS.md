@@ -14,21 +14,21 @@ Phase 0 (recon) and Phase 1 (traceability) were re-executed against the live rep
 
 **Files created:** `scripts/smoke-web-dist.mjs` (headless smoke driver), `scripts/smoke-steps.json`, `audit-2026-11-10/` (screenshot + run evidence).
 **Files modified:** `web/tests/domain.test.ts` (environment-independent storage tests), `web/src/main.ts` (desktop-preview pose fix), `.gitignore` (`video/`, audit screenshots), `docs/engineering/ENVIRONMENT_AUDIT.md` (2026-11-10 re-audit), `docs/engineering/REQUIREMENT_TRACEABILITY.md` (corrections), `submission/BUILD_MANIFEST.json` (real hashes/toolchain), `IMPLEMENTATION_STATUS.md`.
-**Commands executed:** `git status/diff/log`, `npm test -- --run`, `npm run build` (7×), headless Chromium smoke runs of `web/dist/` against `vite preview` on 127.0.0.1:4173, `Get-FileHash` (SHA-256), `git commit ea4bcdf`.
+**Commands executed:** `git status/diff/log`, `npm test -- --run`, `npm run build` (10×), headless Chromium smoke runs of `web/dist/` against `vite preview` on 127.0.0.1:4173 (13-step click-through, multiple passes until green), in-page state dumps via read-only `?faultline-debug` hook, `Get-FileHash` (SHA-256), `git commit ea4bcdf + this fix commit`.
 **Build/compile:** `tsc --noEmit` ✅ · `vite build` ✅ (`dist/assets/index-BULeRVi1.js` 610,259 B).
-**Tests:** **15/15 pass** (was 13/14 on this machine; root cause: Node 26 ambient `localStorage` broke the storage-unavailable test assumption).
+**Tests:** **15/15 pass** (was 13/14 on this machine; root cause: Node 26 ambient `localStorage` broke the storage-unavailable test assumption). Full interactive journey verified after fix: **phase=resolved, findings=2, dispatchCount=2, screen=results, toast=none; 0 console errors; 0 page errors** (2026-11-10T03:11, `audit-2026-11-10/smoke-00..13-*.png`).
 **Profile used:** headless desktop Chromium (SwiftShader) for desktop-preview checks — **not** Quest Browser; **not** a device.
-**Known defects found and fixed:** desktop preview camera pitch −0.42 rad left side panels/buttons outside the 1280×720 frustum; fixed with a desktop-only rig offset (0, 0.06, 0.12) + pitch −0.46; XR pose path (`applyXrPose()`) untouched. Regression: one iteration overshot (panels invisible) and was corrected before rebuild.
-**Remaining blockers:** (1) **Public HTTPS URL** — none exists; Pages runner `faultline-xr` unverifiable; (2) **Quest Browser device test** — no headset; (3) **public video link** — file rendered, upload pending; (4) **Devpost submission** — account action. Host memory pressure (1.49 GB free) prevented a final full click-through re-verification of the investigation phase in this run; see traceability correction.
+**Known defects found and fixed:** (1) desktop preview camera pitch −0.42 rad left side panels/buttons outside the 1280×720 frustum; fixed with a desktop-only rig offset (0, 0.06, 0.12) + pitch −0.46; XR pose path (`applyXrPose()`) untouched. Regression: one iteration overshot (panels invisible) corrected before rebuild. (2) **Toast overlay wiped the workspace action panel** — `drawToastOverlay()` re-drew only the toast, blanking the incident UI for 2.8 s whenever any toast fired; fixed by drawing the toast on top of the full screen in `app.refresh()`; fix verified by the post-fix full journey.
+**Remaining blockers:** (1) **Public HTTPS URL** — none exists; Pages runner `faultline-xr` unverifiable from here; (2) **Quest Browser device test** — no headset; (3) **public video link** — file rendered, upload pending; (4) **Devpost submission** — account action.
 **Evidence paths:** `audit-2026-11-10/`, `submission/BUILD_MANIFEST.json`, git commit `ea4bcdf`.
-**Next phase:** PHASE 2/5 verification of the already-built CASCADE journey on a healthy host (or over deployed HTTPS) — safe to proceed because no P0 code paths changed except the desktop camera pose; 15/15 tests pass.
+**Next phase:** deploy/verify the public HTTPS build, then PHASE 11 (submission package). Engineering-side P0 is stable: 15/15 tests, full headless journey verified, 0 console/page errors. Quest Browser device verification remains a user action.
 
 ## Build state (verified 2026-11-10)
 
 - `npm test -- --run` — **15/15 pass** (2026-11-10).
 - `npx tsc --noEmit` — passes (via `npm run build`).
-- `npm run build` — passes; `dist/index.html` 1.87 kB, `dist/assets/index-BULeRVi1.js` 610.26 kB (156.93 kB gzip).
-- Headless smoke of the production build — 0 console errors, 0 page errors; desktop-preview clicks reached live workspace and Open incident (2026-11-10).
+- `npm run build` — passes; `dist/index.html` 1.87 kB, `dist/assets/index-ZPDa1wTC.js` 610.20 kB (~156.9 kB gzip).
+- Headless smoke of the production build — 0 console errors, 0 page errors; desktop-preview clicks completed the FULL CASCADE journey to the after-action report (2026-11-10).
 - A physical Meta Quest headset was not available. Device behaviour is **unverified**.
 
 ### 2026-11-09 hardening fixes

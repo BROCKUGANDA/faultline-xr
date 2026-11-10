@@ -1,5 +1,18 @@
 # Known Limitations — FAULTLINE XR
 
+**2026-11-10 (WebXR reality — authoritative):** The submission is the WebXR static build in `web/` (Meta Quest Browser), not the Unity APK described in the older sections below. Current honest state:
+
+- **No Quest Browser / device test has been performed** — no headset is available; hand-tracking, pinch hysteresis, render comfort and 60+ FPS on Quest are **unverified**.
+- **Desktop preview is a review aid only** — mouse pointer stands in for a pinch; layout/perf there do not validate headset comfort.
+- **Public HTTPS deployment is pending** — no URL exists yet; the Pages self-hosted runner could not be verified.
+- **`scripts/smoke-steps.json` and `scripts/smoke-web-dist.mjs` are dev/QA tooling** committed to the repo; they are not part of the shipped bundle (but they expect `puppeteer-core` at `web/node_modules` or `video/node_modules`).
+- **Read-only `?faultline-debug` URL hook** in `web/src/main.ts` exposes live app state (`window.__faultlineApp.state`) for automated e2e verification. It is invisible in normal use, never required at runtime, and may be removed for a frozen release candidate.
+- **Toast overlay bug (fixed 2026-11-10):** a visible toast made the workspace action panel render blank until the toast expired. Fixed; verified by the full headless journey. Any regression in toast/panel rendering should be treated as P1.
+- **Unity/C# tree is reference-only** — never compiled here, never a build input; treat its claims accordingly.
+- **Save data is `localStorage`** in the browser; failures degrade to in-memory defaults (FL-PS-0100) and never block the journey.
+
+---
+
 Current state as of 2026-11-08 (PHASE 0–14 code complete, pending Unity install for compile/build). Tracked here so nothing is forgotten before PHASE 15 submission.
 
 ## Honest build state

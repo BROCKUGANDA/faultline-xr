@@ -17,6 +17,7 @@ import {
   drawActionPanel,
   drawCenterPanel,
   drawTimelinePanel,
+  drawToast,
   type AppState,
   type Phase,
   type ScreenModel,
@@ -219,8 +220,19 @@ export class FaultlineApp {
 
   refresh(): void {
     const model = this.model();
-    if (this.panels.center.group.visible) this.panels.center.draw((painter) => drawCenterPanel(painter, model));
-    if (this.panels.action.group.visible) this.panels.action.draw((painter) => drawActionPanel(painter, model));
+    const toast = this.state.toast;
+    if (this.panels.center.group.visible) {
+      this.panels.center.draw((painter) => {
+        drawCenterPanel(painter, model);
+        if (toast) drawToast(painter, toast);
+      });
+    }
+    if (this.panels.action.group.visible) {
+      this.panels.action.draw((painter) => {
+        drawActionPanel(painter, model);
+        if (toast) drawToast(painter, toast);
+      });
+    }
     if (this.panels.timeline.group.visible) this.panels.timeline.draw((painter) => drawTimelinePanel(painter, model));
   }
 

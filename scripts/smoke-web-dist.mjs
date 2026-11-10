@@ -60,6 +60,7 @@ function arg(name, fallback) {
 const url = arg('url', 'http://127.0.0.1:4173/');
 const stepsPath = arg('steps', join(ROOT, 'scripts', 'smoke-steps.json'));
 const outDir = arg('out', join(ROOT, 'audit-2026-11-10'));
+const evalExpr = arg('eval', null);
 mkdirSync(outDir, { recursive: true });
 
 const steps = existsSync(stepsPath)
@@ -118,6 +119,11 @@ for (const step of steps) {
     await new Promise((r) => setTimeout(r, step.wait ?? 800));
   }
   await page.screenshot({ path: join(outDir, `smoke-${String(stepIndex).padStart(2, '0')}-${name}.png`) });
+}
+
+if (evalExpr) {
+  const result = await page.evaluate(evalExpr);
+  console.log('eval:', JSON.stringify(result));
 }
 
 await browser.close();

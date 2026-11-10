@@ -4,7 +4,7 @@ import { Sfx } from './audio';
 import { FaultlineApp } from './app';
 import { InfrastructureScene } from './scene';
 import { Panel, type PanelButton } from './ui/panel';
-import { drawCenterPanel, drawToast } from './ui/screens';
+import { drawCenterPanel } from './ui/screens';
 import { themeFromSettings } from './ui/theme';
 import { loadSave } from './domain';
 import { HandRig } from './xr/hands';
@@ -140,6 +140,13 @@ const interaction = new InteractionManager(scene, {
 
 const app = new FaultlineApp(infra, { center, action, timeline }, sfx, resetView);
 sfx.setEnabled(app.state.settings.audio);
+
+// Read-only debug hook for automated verification (smoke driver). Exposes app
+// state only when the URL carries ?faultline-debug; stripping this block after
+// verification is safe. Never used in normal play.
+if (new URLSearchParams(window.location.search).has('faultline-debug')) {
+  (window as unknown as Record<string, unknown>).__faultlineApp = { get state() { return app.state; } };
+}
 infra.reducedMotion = app.state.settings.reducedMotion;
 
 const hands = new HandRig(scene, camera, renderer, canvas);
@@ -149,29 +156,6 @@ let entered = false;
 let xrSession: XRSession | null = null;
 let vrSupported = false;
 let touchGuard = 0;
-
-function drawToastOverlay(): void {
-  const toast = app.state.toast;
-  if (!toast) return;
-  if (app.state.screen === 'workspace') {
-    action.draw((actionPainter) => {
-      drawToast(actionPainter, toast);
-    });
-  } else {
-    center.draw((inner) => {
-      drawCenterPanel(inner, {
-        state: app.state,
-        nodes: [],
-        events: [],
-        aggregateHealth: 0,
-        rootHealth: 0,
-        elapsedMs: 0,
-        now: Date.now(),
-      });
-      drawToast(inner, toast);
-    });
-  }
-}
 
 function unlockAndMaybePresent(): void {
   sfx.unlock();
@@ -301,9 +285,8 @@ window.addEventListener('resize', () => {
 })();
 
 const clock = new THREE.Clock();
-let lastRefresh = 0;
 
-renderer.setAnimationLoop((time) => {
+renderer.setAnimationLoop(() => {
   const delta = Math.min(clock.getDelta(), 0.05);
   const elapsed = clock.elapsedTime;
 
@@ -311,11 +294,6 @@ renderer.setAnimationLoop((time) => {
   interaction.update(hands.pointers);
   app.update(delta);
   infra.update(delta, elapsed);
-
-  if (time - lastRefresh > 1000 || app.state.toast) {
-    lastRefresh = time;
-    drawToastOverlay();
-  }
 
   renderer.render(scene, camera);
 });

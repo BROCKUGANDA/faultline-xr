@@ -77,12 +77,12 @@ Judge path:
 
 ## 6. Test report
 
-Verified locally in the implementation environment:
+Verified locally in the implementation environment (updated 2026-11-10):
 
 - TypeScript compile check — passed.
-- Domain test suite — **12/12 passed**.
+- Domain test suite — **15/15 passed**.
 - Production build — passed.
-- Browser smoke test — not yet performed.
+- Headless browser smoke test — performed 2026-11-10 (0 console errors, 0 page errors; desktop-preview clicks completed the full CASCADE journey to the after-action report; final state resolved/results). This is **not** a device test.
 - Meta Quest Browser headset test — not yet performed.
 
 Relevant test file:
