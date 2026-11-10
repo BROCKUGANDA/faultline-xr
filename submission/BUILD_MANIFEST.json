@@ -6,7 +6,8 @@
   "publicUrl": "<PUBLIC_HTTPS_URL>",
   "publicUrlStatus": "BLOCKED — no deployment URL exists yet. .github/workflows/deploy-pages.yml targets self-hosted runner 'faultline-xr'; merge to main + green run required, or deploy web/dist/ to any HTTPS host. Verify full journey over HTTPS before judging.",
   "videoUrl": "<PUBLIC_YOUTUBE_OR_VIMEO_URL>",
-  "videoUrlStatus": "BLOCKED (user) — video/demo/out/faultline-xr-demo.mp4 (60,252,317 bytes) is rendered but not uploaded/public",
+  "videoUrlStatus": "BLOCKED (user) — video/demo/out/faultline-xr-demo.mp4 is rendered, not uploaded/public",
+  "videoFileVerified2026-11-10": { "path": "video/demo/out/faultline-xr-demo.mp4", "sizeBytes": 60252317, "sha256": "054E5CD921701767E5DB50B02E4FC7B0BBC29DC987F4A3CF99FAAF681AA1C24E", "duration": "00:01:55.02", "codec": "h264 High 1920x1080 @30fps; AAC 48kHz stereo", "meetsThreeMinuteLimit": true },
   "buildTimestamp": "2026-11-10T03:43:23Z",
   "sourceCommit": "0650491",
   "toolchain": {
