@@ -1,0 +1,65 @@
+# FAULTLINE XR — full deployment (static site + dedicated Cloudflare Tunnel).
+#
+# One network, one project: the tunnel resolves the site by container name, so
+# there is no dependency on host-gateway routing or on ports published to the
+# host. The tunnel is deliberately separate from the existing `plumbline` tunnel
+# so this stack cannot disturb production ingress rules.
+#
+# Deploy:  docker compose -f docker-compose.faultline.yml up -d
+# Verify:  curl -s http://127.0.0.1:8088/healthz
+#          curl -sSI https://faultline.aiazimara.com/
+# Stop:    docker compose -f docker-compose.faultline.yml down
+services:
+  site:
+    image: nginx:1.27-alpine
+    container_name: faultline-xr
+    restart: unless-stopped
+    working_dir: /usr/share/nginx/html
+    volumes:
+      # Built Vite output (web/dist) — index.html + assets/ together.
+      - ./site:/usr/share/nginx/html:ro
+    # Loopback-only publication for local probing. Cloudflare reaches the site
+    # over the internal Docker network, not through this port.
+    ports:
+      - "127.0.0.1:8088:80"
+    environment:
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - faultline
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: faultline-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token-file /run/secrets/tunnel-token
+    secrets:
+      - tunnel-token
+    depends_on:
+      site:
+        condition: service_healthy
+    networks:
+      - faultline
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  faultline:
+    driver: bridge
+
+secrets:
+  tunnel-token:
+    file: /opt/faultline-xr/.tunnel-token

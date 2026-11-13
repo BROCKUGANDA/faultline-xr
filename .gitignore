@@ -53,6 +53,13 @@ desktop.ini
 *.env
 *.env.local
 
+# Android signing material — NEVER commit. A leaked keystore lets anyone ship
+# an update signed as this app.
+*.keystore
+*.jks
+submission/build/*.keystore
+submission/build/apk-build/
+
 # Large/local tooling artifacts (not for git)
 video/
 audit-2026-11-09/*.png

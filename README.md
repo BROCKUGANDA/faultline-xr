@@ -116,7 +116,7 @@ submission/             Competition submission documentation
 
 ## Reference implementation
 
-The C# sources under `Assets/Faultline/Scripts/` provide the original domain, scenario, and interaction contracts that informed the TypeScript implementation. However, the repository does not include a Unity `ProjectSettings/` directory, generated project files, scenes, or the Meta XR SDK. It therefore cannot build an APK in its present state.
+The C# sources under `Assets/Faultline/Scripts/` provide the original domain, scenario, and interaction contracts that informed the TypeScript implementation. The repository contains minimal Unity scaffolding (`ProjectSettings/ProjectVersion.txt` and `Packages/manifest.json`) but no installed Unity Editor, no resolved packages, and no scenes on disk. It therefore cannot build an APK in its present state.
 
 See:
 

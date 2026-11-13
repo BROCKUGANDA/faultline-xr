@@ -6,8 +6,10 @@ import {
   Simulation,
   createCascade,
   defaultSave,
+  DEFAULT_SETTINGS,
   loadSave,
   statusForHealth,
+  STORAGE_KEY,
   writeSave,
   type SaveData,
 } from '../src/domain';
@@ -247,5 +249,77 @@ describe('SaveData', () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.code).toBe('FL-PS-0100');
     expect(loadSave(store)).toEqual(defaultSave());
+  });
+
+  describe('corrupt save hardening', () => {
+    const storageWith = (value: string): Storage => {
+      const map = new Map<string, string>([[STORAGE_KEY, value]]);
+      return {
+        getItem: (key: string) => map.get(key) ?? null,
+        setItem: (key: string, v: string) => {
+          map.set(key, String(v));
+        },
+        removeItem: (key: string) => {
+          map.delete(key);
+        },
+        clear: () => map.clear(),
+        key: (index: number) => [...map.keys()][index] ?? null,
+        get length() {
+          return map.size;
+        },
+      } as Storage;
+    };
+
+    it('rejects syntactically invalid JSON instead of throwing', () => {
+      expect(loadSave(storageWith('{not json'))).toEqual(defaultSave());
+    });
+
+    it('rejects an unexpected save version', () => {
+      expect(loadSave(storageWith('{"version":99,"settings":{},"runs":[]}'))).toEqual(defaultSave());
+    });
+
+    it('drops settings of the wrong type rather than trusting them', () => {
+      // A hand-edited or partially-written save must not disable rendering or
+      // set an out-of-range text scale.
+      const raw = JSON.stringify({
+        version: 1,
+        settings: { textScale: 'huge', highContrast: 'yes', reducedMotion: 1, audio: null, leftHanded: {} },
+        runs: [],
+      });
+      const loaded = loadSave(storageWith(raw));
+      expect(loaded.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('normalises an out-of-range text scale to the default', () => {
+      const raw = JSON.stringify({ version: 1, settings: { textScale: 4.2 }, runs: [] });
+      expect(loadSave(storageWith(raw)).settings.textScale).toBe(DEFAULT_SETTINGS.textScale);
+    });
+
+    it('keeps a valid stored text scale', () => {
+      const raw = JSON.stringify({ version: 1, settings: { textScale: 1.3, audio: false }, runs: [] });
+      const loaded = loadSave(storageWith(raw));
+      expect(loaded.settings.textScale).toBe(1.3);
+      expect(loaded.settings.audio).toBe(false);
+      expect(loaded.settings.highContrast).toBe(DEFAULT_SETTINGS.highContrast);
+    });
+
+    it('drops run records with missing or non-finite fields', () => {
+      const raw = JSON.stringify({
+        version: 1,
+        settings: {},
+        runs: [
+          { at: 1, scenarioId: 'cascade-1', resolved: true, durationMs: 1000, agentsDispatched: 2, averageConfidence: 0.9, healthRecovered: 0.3, incidentId: 'i-1' },
+          { at: 2, scenarioId: 'cascade-2', resolved: true, durationMs: 500, agentsDispatched: 1, averageConfidence: 0.5, healthRecovered: 0.1, incidentId: 'i-2' },
+          { at: 3, scenarioId: 'cascade-3' },
+        ],
+      });
+      const loaded = loadSave(storageWith(raw));
+      expect(loaded.runs).toHaveLength(2);
+    });
+
+    it('ignores non-object settings entirely', () => {
+      const raw = JSON.stringify({ version: 1, settings: 'broken', runs: [] });
+      expect(loadSave(storageWith(raw)).settings).toEqual(DEFAULT_SETTINGS);
+    });
   });
 });

@@ -205,16 +205,36 @@ export class FaultlineApp {
       this.refresh();
     }
     if (this.state.screen === 'workspace') {
+      // Fixed-step accumulator with a catch-up cap. Resetting the accumulator
+      // on every tick (the previous behaviour) made the simulation rate depend
+      // on frame rate: at 72 Hz on Quest the cascade ran ~1.4x slower than at
+      // 90 Hz, and a dropped frame silently lost a tick instead of catching up.
       this.tickAccumulator += dt;
-      if (this.tickAccumulator >= 1) {
-        this.tickAccumulator = 0;
+      const TICK_SECONDS = 1;
+      const MAX_CATCHUP_TICKS = 3;
+      let ticks = 0;
+      while (this.tickAccumulator >= TICK_SECONDS && ticks < MAX_CATCHUP_TICKS) {
+        this.tickAccumulator -= TICK_SECONDS;
         this.tickSimulation();
+        ticks += 1;
       }
+      // If the app was backgrounded (or the headset suspended rendering) the
+      // accumulator can hold many seconds of debt. Drop it rather than running
+      // a burst of ticks that would teleport the incident state.
+      if (this.tickAccumulator > TICK_SECONDS * MAX_CATCHUP_TICKS) {
+        this.tickAccumulator = 0;
+      }
+
       this.refreshAccumulator += dt;
       if (this.refreshAccumulator >= 1) {
         this.refreshAccumulator = 0;
         this.refresh();
       }
+    } else {
+      // Outside the workspace the simulation is paused, but keep the accumulator
+      // drained so returning to the workspace does not immediately spend a
+      // backlog of ticks.
+      this.tickAccumulator = 0;
     }
   }
 
@@ -258,6 +278,10 @@ export class FaultlineApp {
     this.state.resultsAt = 0;
     this.state.lastPhaseChangeAt = Date.now();
     this.initialAggregate = this.simulation.aggregateHealth;
+    // Reset both accumulators. Leaving them at their previous values meant a
+    // replay carried up to a second of leftover time, so the first tick of the
+    // new run could fire immediately (or be skipped) depending on the old run's
+    // end state.
     this.tickAccumulator = 0;
     this.refreshAccumulator = 0;
 

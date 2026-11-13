@@ -186,25 +186,35 @@ export class InteractionManager {
     const delay = pointer.kind === 'mouse' ? 0 : CLICK_DEBOUNCE_MS;
     if (performance.now() - runtime.startedAt < delay) return;
 
+    // Commit the press. Before this point the pointer is still ambiguous, so
+    // nothing has fired and no drag has started.
     const pressed = runtime.pressed;
-    if (pressed?.kind === 'panel' && pressed.button) {
+
+    // A press that began on empty space (no panel, no node) is a graph drag
+    // and must NOT be reclassified as a panel drag if the hand later sweeps
+    // across a panel. Re-resolving the hit at commit time was the bug: it let
+    // a rotate gesture end by "clicking" whatever button happened to sit under
+    // the hand on release. The hit captured at press time is authoritative.
+    if (!pressed) {
+      runtime.committed = true;
+      runtime.drag = { kind: 'graph', last: runtime.point.clone() };
+      return;
+    }
+
+    if (pressed.kind === 'panel' && pressed.button) {
       runtime.committed = true;
       if (pressed.button.enabled) this.host.onButton(pressed.panelId, pressed.button);
       return;
     }
-    if (pressed?.kind === 'node') {
+    if (pressed.kind === 'node') {
       runtime.committed = true;
       this.host.onNode(pressed.nodeId);
       return;
     }
-    if (pressed?.kind === 'panel') {
+    if (pressed.kind === 'panel') {
       runtime.committed = true;
       runtime.drag = { kind: 'panel', panelId: pressed.panelId, last: runtime.point.clone() };
       return;
-    }
-    if (!pressed) {
-      runtime.committed = true;
-      runtime.drag = { kind: 'graph', last: runtime.point.clone() };
     }
   }
 

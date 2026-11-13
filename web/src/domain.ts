@@ -646,7 +646,8 @@ export interface SaveData {
   runs: RunRecord[];
 }
 
-const STORAGE_KEY = 'faultline-xr.save.v1';
+/** Local-storage key. Exported so tests address the real key, not a copy. */
+export const STORAGE_KEY = 'faultline-xr.save.v1';
 
 export function defaultSave(): SaveData {
   return { version: 1, settings: { ...DEFAULT_SETTINGS }, runs: [] };
@@ -676,12 +677,38 @@ export function loadSave(storage?: Storage): SaveData {
       .slice(0, 25);
     return {
       version: 1,
-      settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
+      // Spread settings last so a malformed stored value (a string, a NaN, or a
+      // missing key) cannot override the typed defaults and put the app into an
+      // undefined state. Unknown keys are dropped by construction.
+      settings: sanitizeSettings(parsed.settings),
       runs,
     };
   } catch {
     return defaultSave();
   }
+}
+
+/**
+ * Merge untrusted stored settings onto the defaults, keeping only values of the
+ * expected type and range. A corrupted save therefore degrades to a usable
+ * default rather than disabling audio/rendering or producing an invalid scale.
+ */
+function sanitizeSettings(input: unknown): Settings {
+  const raw: Partial<Record<keyof Settings, unknown>> =
+    input && typeof input === 'object' ? (input as Partial<Record<keyof Settings, unknown>>) : {};
+  const allowedScales = [1, 1.15, 1.3];
+  const candidate = raw.textScale;
+  const scale =
+    typeof candidate === 'number' && allowedScales.some((value) => Math.abs(value - candidate) < 0.01)
+      ? candidate
+      : DEFAULT_SETTINGS.textScale;
+  return {
+    textScale: scale,
+    highContrast: typeof raw.highContrast === 'boolean' ? raw.highContrast : DEFAULT_SETTINGS.highContrast,
+    reducedMotion: typeof raw.reducedMotion === 'boolean' ? raw.reducedMotion : DEFAULT_SETTINGS.reducedMotion,
+    audio: typeof raw.audio === 'boolean' ? raw.audio : DEFAULT_SETTINGS.audio,
+    leftHanded: typeof raw.leftHanded === 'boolean' ? raw.leftHanded : DEFAULT_SETTINGS.leftHanded,
+  };
 }
 
 export function writeSave(data: SaveData, storage?: Storage): Result<boolean> {

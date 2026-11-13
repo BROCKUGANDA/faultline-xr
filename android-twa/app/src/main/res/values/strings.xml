@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FAULTLINE XR</string>
+    <string name="launch_url">https://FAULTLINE_AZIMARA_HOST/</string>
+    <!--
+      Shown in the action bar. It states the limitation up front rather than
+      letting the user discover it after tapping around: Android WebView does
+      not implement the WebXR Device API, so the in-app view is the
+      desktop-preview flow. The hand-tracked experience runs in a WebXR browser
+      (Meta Quest Browser on a headset).
+    -->
+    <string name="preview_banner">Desktop preview · WebXR hands need a headset browser</string>
+</resources>

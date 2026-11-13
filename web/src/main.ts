@@ -197,13 +197,35 @@ if (enterDesktop) {
 
 if (enterXr) {
   enterXr.addEventListener('click', async () => {
-    if (!vrSupported || !xrSession) return;
+    if (!vrSupported) return;
+    const xr = (navigator as Navigator & {
+      xr?: { requestSession(mode: XRSessionMode, options?: XRSessionInit): Promise<XRSession> };
+    }).xr;
+    if (!xr) return;
+
+    // Disable immediately: a second click while the session is being created
+    // would otherwise queue a duplicate request.
+    enterXr.disabled = true;
+    status('Starting VR session…');
     unlockAndMaybePresent();
+
     try {
-      await renderer.xr.setSession(xrSession);
+      // `optionalFeatures` only. Requesting hand-tracking as a *required*
+      // feature makes session creation fail outright on any device that does
+      // not expose it, which would block entry rather than degrade gracefully.
+      const session = await xr.requestSession('immersive-vr', {
+        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
+      });
+      xrSession = session;
+      await renderer.xr.setSession(session);
       enterXrMode();
     } catch (error) {
-      status(error instanceof Error ? `Could not start VR: ${error.message}` : 'Could not start VR.');
+      const detail = error instanceof Error ? error.message : 'Unknown WebXR error.';
+      status(`Could not start VR: ${detail}`);
+      // Re-enable so the operator can retry after dismissing the browser prompt.
+      enterXr.disabled = false;
+      sfx.error();
+      app.refresh();
     }
   });
 }
@@ -229,6 +251,10 @@ renderer.xr.addEventListener('sessionend', () => {
   if (desktopHint) desktopHint.hidden = false;
   interaction.enabled = entered;
   applyCameraPitch();
+  // Release the ended session and clear any in-flight pinch so the next entry
+  // starts from a clean interaction state rather than inheriting a stale drag.
+  xrSession = null;
+  interaction.cancelAll();
   app.refresh();
 });
 
@@ -262,25 +288,19 @@ window.addEventListener('resize', () => {
   };
   if (navigatorWithXr.xr) {
     try {
+      // Only probe support at load. The session itself must be created from a
+      // user gesture (transient activation), so `requestSession` is deferred to
+      // the Enter VR click handler below. Calling it here is rejected by
+      // browsers that enforce the WebXR activation requirement, which surfaced
+      // as "VR supported, but the session could not be prepared."
       vrSupported = await navigatorWithXr.xr.isSessionSupported('immersive-vr');
-      if (vrSupported) {
-        try {
-          xrSession = await navigatorWithXr.xr.requestSession('immersive-vr', {
-            optionalFeatures: ['local-floor', 'hand-tracking', 'bounded-floor'],
-          });
-          await renderer.xr.setSession(xrSession);
-          if (enterXr) {
-            enterXr.disabled = false;
-            enterXr.hidden = false;
-          }
-          status('VR ready. Pinch “Enter VR” or put on the headset.');
-        } catch {
-          status('VR supported, but the session could not be prepared.');
-        }
-      } else {
-        status('Immersive VR is not available in this browser.');
+      if (vrSupported && enterXr) {
+        enterXr.disabled = false;
+        enterXr.hidden = false;
       }
+      status(vrSupported ? 'VR ready. Pinch “Enter VR” or put on the headset.' : 'Immersive VR is not available in this browser.');
     } catch {
+      vrSupported = false;
       status('Immersive VR is not available in this browser.');
     }
   } else {
