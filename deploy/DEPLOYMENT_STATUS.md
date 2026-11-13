@@ -1,7 +1,26 @@
 # FAULTLINE XR — Deployment Status
 
 **Date:** 2026-11-13
+**Live URL:** https://faultline.aiazimara.com
 **Host:** Hetzner `hetzner-hermes` (135.181.83.101), Ubuntu, root SSH key auth
+
+---
+
+## Status: LIVE AND VERIFIED
+
+| Check | Result |
+| --- | --- |
+| `https://faultline.aiazimara.com/` | ✅ **200** |
+| Document is the FAULTLINE XR build | ✅ `<title>FAULTLINE XR</title>`, correct bundle hash |
+| JS / CSS / healthz assets | ✅ **200 / 200 / 200** |
+| Browser boots the app | ✅ 8/8 assertions (`scripts/e2e-public.mjs`) |
+| No console errors, no failed requests | ✅ clean |
+| Containers stable | ✅ 0 restarts, both healthy |
+| TLS | ✅ Cloudflare edge certificate, HTTPS enforced |
+
+`e2e-public.mjs` runs against the **live URL**, so DNS, the tunnel, TLS and the
+deployed bundle are all validated the way a judge receives them — not just
+against localhost.
 
 ---
 
@@ -27,37 +46,40 @@ docker compose -f docker-compose.faultline.yml down      # stop
 
 ---
 
-## The one remaining step (needs your Cloudflare login)
+## Cloudflare Tunnel (done — this is how the URL is live)
 
-The public URL `https://faultline.aiazimara.com` requires **one dashboard action**.
-There is no Cloudflare API token on this machine (wrangler OAuth expired, no
-`CLOUDFLARE_API_TOKEN`), and `aiazimara.com`'s NS are `eloise/maciej.ns.cloudflare.com`,
-so a DNS record can only be created by you or with a token.
+A **dedicated tunnel** was created so the production `plumbline` tunnel and its
+ingress rules are never touched.
 
-**Cloudflare Dashboard → Zero Trust → Networks → Tunnels →**
-tunnel `d7326277-3793-4c6e-8f87-3b64bc244fa7` **→ Public Hostname → Add**
-
-| Field | Value |
+| Item | Value |
 | --- | --- |
-| Subdomain | `faultline` |
-| Domain | `aiazimara.com` |
-| Service | `HTTP` |
-| URL | `localhost:8088` |
+| Tunnel name | `faultline-xr` |
+| Tunnel ID | `4f041f37-b5ff-48c6-8a79-12078c4abaa8` |
+| Ingress | `faultline.aiazimara.com` → `http://faultline-xr:80` (container name) |
+| Catch-all | `http_status:404` |
+| DNS | `faultline.aiazimara.com` CNAME → `4f041f37-….cfargotunnel.com` (proxied) |
+| Connector | `faultline-tunnel` container, same Docker network as the site |
 
-This creates the proxied CNAME automatically. Then:
-
-```bash
-curl -sSI https://faultline.aiazimara.com/   # expect 200 text/html
-```
-
-### Alternative: give me a token and I finish it
-
-Create a Cloudflare API token with **Zone → DNS → Edit** on `aiazimara.com` plus
-**Account → Cloudflare Tunnel → Edit**, then:
+Everything was applied through the Cloudflare API with a scoped token:
 
 ```powershell
-$env:CLOUDFLARE_API_TOKEN = "<token>"
-# I then run: cloudflared tunnel route dns create + ingress update, and verify HTTPS
+# DNS record
+POST /zones/b4ed7767a390081877401fc4dc11f9a3/dns_records
+# tunnel
+POST /accounts/e347bacdb10db4db992748ba5e7d91f7/cfd_tunnel
+# ingress
+PUT  /accounts/…/cfd_tunnel/4f041f37-…/configurations
+```
+
+Both containers share the `faultline` Docker network, so cloudflared resolves the
+site by name. No host-gateway routing, no reliance on the loopback port.
+
+### Re-deploy
+
+```bash
+cd /opt/faultline-xr
+docker compose -f docker-compose.faultline.yml up -d
+docker compose -f docker-compose.faultline.yml logs -f tunnel
 ```
 
 ---
@@ -73,8 +95,8 @@ $env:CLOUDFLARE_API_TOKEN = "<token>"
   serving a live Next.js site with WAF and strict security headers. Editing it to
   add a vhost risks an unrelated production outage, so I did not touch it.
 
-The tunnel path is isolated: a dedicated container, a dedicated port, and no change
-to any existing service.
+The tunnel path is isolated: a dedicated tunnel, a dedicated container, a dedicated
+network, and no change to any existing service.
 
 ---
 
