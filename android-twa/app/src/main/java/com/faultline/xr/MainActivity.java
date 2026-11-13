@@ -95,8 +95,14 @@ public class MainActivity extends Activity {
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        // WebGL needs hardware acceleration, which is on by default at the
-        // application level; these keeps the surface composited correctly.
+        // WebGL is what three.js needs for the spatial graph. It is on by
+        // default, but hardware acceleration must be enabled at the view level
+        // (see LAYER_TYPE_HARDWARE below) or the canvas renders blank.
+        settings.setJavaScriptCanOpenWindowsAutomatically(false);
+        settings.setSupportMultipleWindows(false);
+        // WebXR is absent from WebView, so there is nothing to enable here;
+        // the immersive paths are handled by the external browser hand-off.
+
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         view.setWebChromeClient(new WebChromeClient());
         view.setWebViewClient(new WebViewClient() {
@@ -119,18 +125,46 @@ public class MainActivity extends Activity {
         });
     }
 
-    /** Hand the WebXR experience to a browser that implements the Device API. */
+    /**
+     * Hand the WebXR experience to a browser that can start an immersive
+     * session.
+     *
+     * Android System WebView implements no navigator.xr APIs at all, so the
+     * in-app WebView can only ever show the desktop-preview flow. Chrome for
+     * Android, by contrast, does implement immersive-vr (via Google VR /
+     * Cardboard), so a phone in a Cardboard viewer can run the experience in
+     * immersive stereo. Quest Browser is the hand-tracked path.
+     *
+     * We therefore send an explicit VIEW intent for the Chrome package when it
+     * is installed, and fall back to any browser (then to the in-app preview)
+     * so the action degrades instead of failing.
+     */
     private void launchExternal(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Prefer Chrome for Android: the only common Android browser that
+        // implements immersive-vr sessions.
+        Intent chrome = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        chrome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        chrome.setPackage("com.android.chrome");
         try {
-            startActivity(intent);
-        } catch (Exception error) {
-            // No browser at all: fall back to the in-app preview, which is
-            // already loaded, rather than closing the experience.
-            if (webView != null) {
-                webView.loadUrl(url);
-            }
+            startActivity(chrome);
+            return;
+        } catch (Exception ignored) {
+            // Chrome not installed; fall through to any browser.
+        }
+
+        Intent any = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        any.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(any);
+            return;
+        } catch (Exception ignored) {
+            // No browser at all.
+        }
+
+        // Last resort: the in-app preview is already loaded, so keep the
+        // experience usable rather than closing it.
+        if (webView != null) {
+            webView.loadUrl(url);
         }
     }
 

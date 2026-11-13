@@ -109,8 +109,8 @@ Package:  com.faultline.xr
 Label:    FAULTLINE XR
 minSdk:   24    targetSdk: 37
 Signed:   v2 ✅  v3 ✅
-Size:     12,950 bytes
-SHA-256:  0BB22310A9F2A85721F1C43368DD42C23B4A0EBB24119D2C4887A4039D954FDA
+Size:     17,046 bytes
+SHA-256:  0D4D2122CF681E90BE40F67AE805BC123E29C9968EF5F60636E178D37E64E6FC
 URL:      https://faultline.aiazimara.com/
 ```
 
@@ -124,16 +124,43 @@ The script is fully offline (aapt2 → javac → d8 → jar → zipalign → apk
 no Gradle, and fails loudly if any stage fails. It restores the source placeholder
 afterwards so the tree stays clean.
 
-**Note on the APK's nature:** this is a TWA launcher, not a native XR runtime.
-Android WebView does **not** implement the WebXR Device API, so the in-app view
-shows the desktop-preview flow; the "Open in VR browser" button hands off to a
-WebXR-capable browser. The judged experience is the WebXR site itself — the APK is
-a convenience install for review on a phone.
+### XR runtime reality — verified, not assumed
+
+| Runtime | `navigator.xr` | `immersive-vr` | Notes |
+| --- | --- | --- | --- |
+| **Android System WebView** | ❌ **none** | ❌ | Every `navigator.xr` API is listed unsupported in WebView ([caniwebview.com](https://caniwebview.com/features/web-feature-webxr-device/)). Platform limit, not an app bug. |
+| **Chrome for Android** | ✅ partial | ✅ **yes** | `immersive-vr` via Google VR / Cardboard (Chrome 79+); `immersive-ar` via ARCore (81+). |
+| **Chrome on Android XR** | ✅ full | ✅ | Hand Input is the default. |
+| **Meta Quest Browser** | ✅ full | ✅ | **Hand-tracked. The judged path.** |
+
+**Consequence:** the APK cannot render immersive VR inside its own WebView. What it
+does instead is hand off to **Chrome for Android** (explicit `com.android.chrome`
+package intent), where a phone in a Cardboard viewer runs the experience in
+immersive stereo. Quest Browser remains the hand-tracked path.
+
+The matrix is served at `https://faultline.aiazimara.com/xr-support.json` so a
+reviewer can see exactly which runtime does what.
 
 ---
 
-## VPS disk (fixed during this session)
+## VPS storage (resolved)
 
-The host was at **100% full (0 bytes free)** — Coolify's own Postgres had stopped
-accepting connections. Reclaimed to **85% used (5.5 GB free)** by removing
-unused Coolify images and rotating journals. No running service was stopped.
+**There was never a separate block-storage volume.** `/dev/sda` is 76 GB total,
+partitioned so `sda3` (74.3 GB) is an LVM physical volume — but the root logical
+volume had been created at only 37.14 GB at install time, leaving **37.15 GB
+unallocated in the volume group**.
+
+That free space was claimed online:
+
+```bash
+lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+resize2fs /dev/ubuntu-vg/ubuntu-lv
+```
+
+| | Before | After |
+| --- | --- | --- |
+| Root filesystem | 37 GB (85% used, 5.3 GB free) | **73 GB (38% used, 44 GB free)** |
+| Free space | 5.3 GB | **44 GB** |
+
+No reboot, no downtime, no data movement — ext4 grew the mounted filesystem in
+place. Unused Coolify images were also pruned (3.57 GB reclaimed).
