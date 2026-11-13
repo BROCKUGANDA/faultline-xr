@@ -1,129 +1,164 @@
-# FAULTLINE XR — Meta VR Start Developer Competition 2026
+# FAULTLINE XR
 
-A hands-first infrastructure-incident remediation experience for Meta Quest and WebXR.
+**Hands-first infrastructure incident remediation for Meta Quest and WebXR.**
 
-You diagnose a cascading service failure, dispatch four deterministic analyst agents, approve a safe remediation, execute it, verify recovery, and resolve the incident — entirely with hand gestures. No controllers, API key, account, or network connection are required during play.
+Diagnose a cascading service failure, dispatch four deterministic analyst agents,
+review the evidence, approve a safe remediation, execute it, verify recovery, and
+resolve the incident — entirely with hand gestures. No controllers, no API keys,
+no accounts, no network calls at runtime.
 
-## Why this submission is playable
+**Live:** https://faultline.aiazimara.com
 
-The original Unity repository contained design and C# reference code, but no Unity project files, scenes, Meta XR SDK integration, APK, or installed Unity environment. It therefore could not produce the competition-required playable build. FAULTLINE XR now ships as a WebXR experience:
+---
 
-- **Three.js** renders the 3D infrastructure graph, panels, hand rays, and node states.
-- **Meta Quest Browser** supplies WebXR immersive-vr sessions and hand-tracking joints.
-- **TypeScript** contains the deterministic simulation, incident lifecycle, agent orchestration, remediation service, and persistence.
-- **Vite** produces a deployable static build with support for GitHub Pages, Vercel, or another HTTPS host.
+## Play it
 
-The earlier Unity/C# project remains in this repository as an architecture and domain reference. It is **not** a buildable Unity project and must not be described as one.
+| Path | How |
+| --- | --- |
+| **Meta Quest (judged path)** | Open the URL in **Quest Browser**, allow hand tracking, tap **Enter VR**, then complete the CASCADE scenario with pinch gestures. |
+| **Phone / tablet** | Open the URL. You get the desktop-preview flow (touch = pointer). Android WebView has no WebXR, so hand tracking is not available here. |
+| **Desktop** | Open the URL, click **Desktop preview**. Mouse = pointer; useful for flow review, not a substitute for headset testing. |
 
-## Run locally
+No install, no account, no keys.
 
-```powershell
-cd "web"
-npm install
-npm run dev
+---
+
+## The experience
+
+A ~5 minute complete loop:
+
+1. **Welcome** — choose the gesture tutorial or begin.
+2. **Scenario** — open CASCADE (7 services, 6 dependencies).
+3. **Detected** — inspect the incident and node health in the spatial graph.
+4. **Investigating** — dispatch at least two of ORACLE, TRACE, SENTRY, FORGE.
+5. **Findings** — review deterministic evidence, confidence, recommendations.
+6. **Approval** — explicitly approve or reject `RestartService`.
+7. **Execution** — checkpointed, reversible remediation.
+8. **Verification** — root-node and aggregate health must recover.
+9. **Resolved** — after-action report, with run history persisted locally.
+
+### Hands-first interaction
+
+- **Pinch** thumb + index to select buttons, nodes, and cards.
+- **Two-hand pinch-and-spread** scales the infrastructure graph.
+- **Pinch a panel edge** to drag it within the seated reach envelope.
+- **Drag empty space** to rotate the graph.
+
+Seated, stationary, ~2 ft reach. Panels can be reset from the interface.
+
+---
+
+## Accessibility
+
+Settings (persisted in `localStorage`, with graceful in-memory fallback):
+
+- Text scale — 100% / 115% / 130%
+- High contrast
+- Reduced motion (disables pulsing and decorative motion)
+- Audio cue toggle
+- Left-handed panel layout
+
+---
+
+## Architecture
+
 ```
-
-Open the printed local URL. Desktop preview uses a mouse pointer and is suitable for reviewing the flow, but it is not a replacement for testing hand tracking in Quest Browser.
-
-## Test and build
-
-```powershell
-cd "web"
-npm test -- --run
-npm run build
-```
-
-The production output is generated at `web/dist/`.
-
-## Deploy for judging
-
-Build once, then deploy `web/dist/` to any HTTPS host that supports WebXR-capable pages. A static host is sufficient; there is no server-side simulation or external API. Keep `index.html` and `assets/` together so relative asset paths continue to work.
-
-For GitHub Pages, publish the contents of `web/dist/` as the site root. For Vercel or another static host, set the output directory to `web/dist`.
-
-## Play on Meta Quest
-
-1. Deploy the built site over HTTPS.
-2. Open the deployed URL in **Meta Quest Browser**.
-3. Grant hand-tracking permission when requested.
-4. Tap **Enter VR** or **Desktop preview**. The VR button is shown after a WebXR session has been prepared.
-5. Begin the CASCADE scenario and complete the incident workflow with pinch gestures.
-
-No controller is needed. Desktop preview is a mouse-based review mode only.
-
-## Experience
-
-The complete first-run flow is:
-
-1. **Welcome** — choose whether to learn the gesture model or begin.
-2. **Scenario** — open CASCADE, the mandatory production-shaped scenario.
-3. **Detected** — inspect the incident and node states in the spatial graph.
-4. **Investigating** — dispatch at least two of ORACLE, TRACE, SENTRY, and FORGE.
-5. **Findings** — review deterministic evidence, confidence, and recommendations.
-6. **Approval** — explicitly approve or reject the proposed `RestartService`.
-7. **Execution** — run the checkpointed, reversible remediation.
-8. **Verification** — confirm root-node and aggregate health recovery.
-9. **Resolved** — open the after-action report and replay if desired.
-
-## Hands-first interaction
-
-- Pinch thumb and index finger to select buttons and graph nodes.
-- A two-hand pinch-and-spread gesture scales the infrastructure graph.
-- Pinch a panel edge or surface to drag it within the seated reach envelope.
-- Drag empty space to rotate the graph.
-- Desktop preview uses the mouse pointer and click instead of pinch.
-
-The environment is seated and stationary. Panels and the graph are placed for an approximately two-foot reach envelope and can be reset from the interface.
-
-## Accessibility and comfort
-
-Settings include:
-
-- Text scale: 100%, 115%, and 130%.
-- High-contrast panel styling.
-- Reduced motion that disables critical-node pulsing and decorative motion.
-- Audio-cue toggle.
-- Left-handed panel layout.
-
-Settings and completed-run records are stored locally in browser storage. Storage failure degrades gracefully rather than breaking the experience.
-
-## Repository layout
-
-```text
 web/
   src/
-    app.ts              App state machine and orchestration
-    audio.ts            Synthesised WebAudio cues
-    domain.ts           Deterministic scenario and services
-    main.ts             Renderer, camera, WebXR, and loop
-    scene.ts            3D graph and environment
-    ui/                 Panel renderer and screens
-    xr/                 Hand rig and interaction manager
-    styles.css          Browser overlay styling
-  tests/                Domain unit tests
-  dist/                 Generated static build
-Assets/                 C#/Unity reference implementation (not buildable as-is)
-docs/                   Architecture, design, QA, and engineering notes
-submission/             Competition submission documentation
+    app.ts            App state machine and orchestration
+    domain.ts         Deterministic simulation, incident, agents, remediation, persistence
+    main.ts           Renderer, camera, WebXR session, animation loop
+    scene.ts          3D infrastructure graph and environment
+    audio.ts          Synthesised WebAudio cues (no audio files)
+    ui/               Canvas panel painter, screens, theme
+    xr/               Hand rig, pinch detection, interaction manager
+  tests/              Unit tests
+android-twa/          Android WebView launcher (review build, not an XR runtime)
+deploy/               Cloudflare Tunnel + nginx compose, deployment notes
+scripts/              Build, e2e, and verification tooling
+submission/           Competition submission docs and build manifest
 ```
 
-## Competition selection
+**Stack:** TypeScript, Three.js, Vite. Static output in `web/dist/` — no server
+component, no runtime network dependency.
 
-- **Track:** Productivity — a focused operator workspace that makes incident response faster and clearer anywhere.
-- **Division:** New Experience — the WebXR implementation was built during the competition window.
-- **Platform:** WebXR / Immersive Web SDK with the WebXR Device API and hand-tracking extension.
-- **Submission path:** Static WebXR site rather than an APK.
+**Submission path:** WebXR static site, not an APK.
 
-## Reference implementation
+---
 
-The C# sources under `Assets/Faultline/Scripts/` provide the original domain, scenario, and interaction contracts that informed the TypeScript implementation. The repository contains minimal Unity scaffolding (`ProjectSettings/ProjectVersion.txt` and `Packages/manifest.json`) but no installed Unity Editor, no resolved packages, and no scenes on disk. It therefore cannot build an APK in its present state.
+## Develop
 
-See:
+```powershell
+cd web
+npm install
+npm run dev        # local dev server
+npm test -- --run  # unit tests
+npm run build      # -> web/dist/
+```
 
-- `submission/SUBMISSION_CHECKLIST.md`
-- `submission/DEMO_SCRIPT.md`
-- `submission/JUDGE_INSTRUCTIONS.md`
-- `submission/COMPLIANCE_MATRIX.md`
-- `submission/DEVPOST_SUBMISSION_FORM.md`
+### Verification
 
-The legacy Unity planning files and C# names are retained only where they document the reference architecture. They are not evidence of a completed Unity build or headset test.
+```powershell
+# unit tests (22)
+cd web; npm test -- --run
+
+# end-to-end against a served build (44 assertions)
+npx vite preview --port 4173 --host 127.0.0.1
+node scripts/e2e-journey.mjs  --url "http://127.0.0.1:4173/?faultline-debug"
+node scripts/e2e-settings.mjs --url "http://127.0.0.1:4173/?faultline-debug"
+node scripts/e2e-edges.mjs    --url "http://127.0.0.1:4173/?faultline-debug"
+
+# against the live public deployment (8 assertions)
+node scripts/e2e-public.mjs --url https://faultline.aiazimara.com/
+```
+
+The `?faultline-debug` flag exposes read-only app state to the test drivers. It is
+inert during normal play and never required at runtime.
+
+---
+
+## Deploy
+
+The live site is a static nginx container behind a **dedicated Cloudflare Tunnel**.
+It is isolated from the other services on the host — its own network, its own
+tunnel, no change to the production edge.
+
+```bash
+cd /opt/faultline-xr
+docker compose -f docker-compose.faultline.yml up -d
+curl -s http://127.0.0.1:8088/healthz
+curl -sSI https://faultline.aiazimara.com/
+```
+
+See `deploy/DEPLOYMENT_STATUS.md` for the full topology and the tunnel/DNS
+configuration.
+
+---
+
+## Android APK
+
+`android-twa/` builds a signed APK that loads the live URL. Build it with:
+
+```powershell
+node scripts/build-twa-apk.mjs --host faultline.aiazimara.com --keypass <password> --out submission\build
+```
+
+Fully offline — `aapt2 → javac → d8 → zipalign → apksigner`. No Gradle, no network.
+
+> **Important limitation, stated plainly:** this is a **launcher, not an XR
+> runtime.** Android WebView does not implement the WebXR Device API, so the
+> in-app view shows the desktop-preview flow. The "Open in VR browser" button
+> hands off to a WebXR-capable browser. The judged experience is the WebXR site
+> itself; the APK is a convenience for phone review.
+
+---
+
+## Repository notes
+
+- The Unity/C# tree (`Assets/`, `Tests/`) is **reference material only**. It is
+  not a buildable Unity project, was never compiled here, and is not the
+  submission path.
+- The signing keystore is git-ignored. **Never commit it** — a leaked keystore
+  lets anyone ship an update signed as this app.
+- CI workflows live in the public repository. This private repo is a mirror and
+  intentionally has no Actions configured.
